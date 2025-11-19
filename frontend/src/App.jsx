@@ -54,14 +54,13 @@ export default function App() {
 
   const getSigner = async () => {
     if (!provider) return null
+    if (!address || !ethers.utils.isAddress(address)) {
+      console.warn('No valid address from ContractKit:', address)
+      return null
+    }
+    
     try {
-      const signer = await provider.getSigner()
-      // Verify we have a valid address
-      const signerAddress = await signer.getAddress()
-      if (!signerAddress || !ethers.utils.isAddress(signerAddress)) {
-        console.warn('Invalid signer address:', signerAddress)
-        return null
-      }
+      const signer = await provider.getSigner(address)
       return signer
     } catch (error) {
       console.error('Error getting signer:', error)
