@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useContractKit } from '@celo-tools/use-contractkit'
 import { ethers } from 'ethers'
 import marketAbi from './abi/CeloMiniMarket.json'
@@ -19,16 +19,32 @@ export default function App() {
   const [decimals, setDecimals] = useState(18)
   const [loading, setLoading] = useState(false)
 
-  const provider = kit?.connection?.web3?.currentProvider
-    ? (() => {
-        const celoProvider = kit.connection.web3.currentProvider
-        // Fix for supportsSubscriptions error
-        if (celoProvider && typeof celoProvider.supportsSubscriptions !== 'function') {
-          celoProvider.supportsSubscriptions = () => false
-        }
-        return new ethers.providers.Web3Provider(celoProvider)
-      })()
-    : null
+  const provider = useMemo(() => {
+    if (!kit?.connection?.web3?.currentProvider) return null
+    
+    const celoProvider = kit.connection.web3.currentProvider
+    
+    // Comprehensive fix for supportsSubscriptions error
+    if (celoProvider) {
+      if (typeof celoProvider.supportsSubscriptions !== 'function') {
+        celoProvider.supportsSubscriptions = () => false
+      }
+      // Also patch other potential missing methods
+      if (typeof celoProvider.on !== 'function') {
+        celoProvider.on = () => {}
+      }
+      if (typeof celoProvider.removeListener !== 'function') {
+        celoProvider.removeListener = () => {}
+      }
+    }
+    
+    try {
+      return new ethers.providers.Web3Provider(celoProvider)
+    } catch (error) {
+      console.error('Provider initialization error:', error)
+      return null
+    }
+  }, [kit?.connection?.web3?.currentProvider])
 
   const getSigner = async () => provider ? await provider.getSigner() : null
 
