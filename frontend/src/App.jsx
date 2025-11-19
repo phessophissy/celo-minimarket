@@ -20,7 +20,14 @@ export default function App() {
   const [loading, setLoading] = useState(false)
 
   const provider = kit?.connection?.web3?.currentProvider
-    ? new ethers.providers.Web3Provider(kit.connection.web3.currentProvider)
+    ? (() => {
+        const celoProvider = kit.connection.web3.currentProvider
+        // Fix for supportsSubscriptions error
+        if (celoProvider && typeof celoProvider.supportsSubscriptions !== 'function') {
+          celoProvider.supportsSubscriptions = () => false
+        }
+        return new ethers.providers.Web3Provider(celoProvider)
+      })()
     : null
 
   const getSigner = async () => provider ? await provider.getSigner() : null
