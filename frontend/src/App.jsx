@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useContractKit } from '@celo-tools/use-contractkit'
 import { ethers } from 'ethers'
 import marketAbi from './abi/CeloMiniMarket.json'
+import './App.css'
 
 const MARKET_ADDRESS = '0x1C824627899cFaeB4bb68101efa022917c93b923'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
@@ -112,4 +113,6 @@ export default function App() {
     </div>
   )
 }
+
+
 
