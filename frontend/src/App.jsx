@@ -18,30 +18,36 @@ export default function App() {
   const [form, setForm] = useState({ name: '', price: '', description: '' })
   const [decimals, setDecimals] = useState(18)
   const [loading, setLoading] = useState(false)
+  const [providerError, setProviderError] = useState(null)
 
   const provider = useMemo(() => {
     if (!kit?.connection?.web3?.currentProvider) return null
     
-    const celoProvider = kit.connection.web3.currentProvider
-    
-    // Comprehensive fix for supportsSubscriptions error
-    if (celoProvider) {
-      if (typeof celoProvider.supportsSubscriptions !== 'function') {
-        celoProvider.supportsSubscriptions = () => false
-      }
-      // Also patch other potential missing methods
-      if (typeof celoProvider.on !== 'function') {
-        celoProvider.on = () => {}
-      }
-      if (typeof celoProvider.removeListener !== 'function') {
-        celoProvider.removeListener = () => {}
-      }
-    }
-    
     try {
-      return new ethers.providers.Web3Provider(celoProvider)
+      const celoProvider = kit.connection.web3.currentProvider
+      
+      // Comprehensive fix for supportsSubscriptions error
+      if (celoProvider) {
+        if (typeof celoProvider.supportsSubscriptions !== 'function') {
+          celoProvider.supportsSubscriptions = () => false
+        }
+        if (typeof celoProvider.on !== 'function') {
+          celoProvider.on = () => {}
+        }
+        if (typeof celoProvider.removeListener !== 'function') {
+          celoProvider.removeListener = () => {}
+        }
+        if (typeof celoProvider.removeAllListeners !== 'function') {
+          celoProvider.removeAllListeners = () => {}
+        }
+      }
+
+      const web3Provider = new ethers.providers.Web3Provider(celoProvider, 'any')
+      setProviderError(null)
+      return web3Provider
     } catch (error) {
       console.error('Provider initialization error:', error)
+      setProviderError(error.message)
       return null
     }
   }, [kit?.connection?.web3?.currentProvider])
@@ -59,9 +65,14 @@ export default function App() {
 
   const loadProducts = async () => {
     if (!provider) return
-    const m = await market()
-    const list = await m.getActiveProducts()
-    setProducts(list)
+    try {
+      const m = await market()
+      const list = await m.getActiveProducts()
+      setProducts(list)
+    } catch (error) {
+      console.error('Error loading products:', error)
+      // Don't throw, just log - allow app to continue
+    }
   }
 
   useEffect(() => {
@@ -110,6 +121,12 @@ export default function App() {
               🔗 Connect Wallet
             </button>}
       </div>
+
+      {providerError && (
+        <div className="error-box">
+          ⚠️ Provider Error: {providerError}. Try disabling conflicting wallet extensions or refreshing the page.
+        </div>
+      )}
 
       <div className="description-card">
         <h2>📱 About This Platform</h2>

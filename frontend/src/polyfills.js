@@ -5,16 +5,37 @@ window.Buffer = Buffer
 window.process = process
 window.global = window
 
-// Fix for MetaMask/Celo provider compatibility with ethers.js
+// Comprehensive fix for multiple wallet extensions
 if (typeof window !== 'undefined') {
-  // Patch ethereum provider when it becomes available
+  // Patch any provider to ensure compatibility
   const patchProvider = (provider) => {
-    if (provider && !provider._isPatched) {
+    if (!provider || provider._isPatched) return provider
+    
+    try {
+      // Add missing methods that ethers.js expects
       if (typeof provider.supportsSubscriptions !== 'function') {
         provider.supportsSubscriptions = () => false
       }
+      if (typeof provider.on !== 'function') {
+        provider.on = () => {}
+      }
+      if (typeof provider.removeListener !== 'function') {
+        provider.removeListener = () => {}
+      }
+      if (typeof provider.removeAllListeners !== 'function') {
+        provider.removeAllListeners = () => {}
+      }
+      
+      // Handle providers array (multiple wallets)
+      if (provider.providers && Array.isArray(provider.providers)) {
+        provider.providers.forEach(p => patchProvider(p))
+      }
+      
       provider._isPatched = true
+    } catch (error) {
+      console.warn('Provider patching error:', error)
     }
+    
     return provider
   }
 
@@ -23,14 +44,21 @@ if (typeof window !== 'undefined') {
     patchProvider(window.ethereum)
   }
 
-  // Watch for ethereum provider initialization
+  // Intercept ethereum property to patch any new providers
+  let currentProvider = window.ethereum
   Object.defineProperty(window, 'ethereum', {
     get() {
-      return this._ethereum
+      return currentProvider
     },
     set(provider) {
-      this._ethereum = patchProvider(provider)
+      currentProvider = patchProvider(provider)
     },
-    configurable: true
+    configurable: true,
+    enumerable: true
   })
+
+  // Also handle window.web3 if it exists (legacy)
+  if (window.web3 && window.web3.currentProvider) {
+    patchProvider(window.web3.currentProvider)
+  }
 }
