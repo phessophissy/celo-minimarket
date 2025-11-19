@@ -19,7 +19,7 @@ export default function App() {
   const [loading, setLoading] = useState(false)
 
   const provider = kit?.connection?.web3?.currentProvider
-    ? new ethers.BrowserProvider(kit.connection.web3.currentProvider)
+    ? new ethers.providers.Web3Provider(kit.connection.web3.currentProvider)
     : null
 
   const getSigner = async () => provider ? await provider.getSigner() : null
@@ -47,7 +47,7 @@ export default function App() {
 
   const addProduct = async (e) => {
     e.preventDefault()
-    const priceWei = ethers.parseUnits(form.price || '0', decimals)
+    const priceWei = ethers.utils.parseUnits(form.price || '0', decimals)
     setLoading(true)
     try {
       const m = await market()
@@ -101,7 +101,7 @@ export default function App() {
           <div key={Number(p.id)} style={{ border:'1px solid #ddd', borderRadius:12, padding:12, marginTop:12 }}>
             <h3>{p.name}</h3>
             <p>{p.description}</p>
-            <p><b>{ethers.formatUnits(p.priceWei, decimals)} cUSD</b></p>
+            <p><b>{ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</b></p>
             <small>Vendor: {p.vendor}</small><br/>
             <button disabled={loading || !address} onClick={() => buyNow(p.vendor, p.priceWei)}>
               {loading ? 'Processing…' : 'Buy Now'}
