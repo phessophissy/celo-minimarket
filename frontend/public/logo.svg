@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <circle cx="400" cy="400" r="350" fill="none" stroke="#3f4f4f" stroke-width="4"/>
+  <circle cx="400" cy="400" r="365" fill="none" stroke="#3f4f4f" stroke-width="2"/>
+  
+  <!-- Shopping basket icon -->
+  <g transform="translate(200, 180)">
+    <!-- Handle -->
+    <path d="M 80 0 Q 120 -30, 160 0" fill="none" stroke="#7fa87f" stroke-width="20" stroke-linecap="round"/>
+    
+    <!-- Basket top -->
+    <line x1="60" y1="10" x2="280" y2="10" stroke="#7fa87f" stroke-width="18" stroke-linecap="round"/>
+    
+    <!-- Celo C with leaf -->
+    <g transform="translate(0, 40)">
+      <path d="M 140 0 A 60 60 0 0 0 80 60 A 60 60 0 0 0 140 120" fill="none" stroke="#8fc9c9" stroke-width="22" stroke-linecap="round"/>
+      <ellipse cx="105" cy="55" rx="8" ry="12" fill="#8fc9c9" transform="rotate(-30 105 55)"/>
+      <ellipse cx="115" cy="60" rx="6" ry="10" fill="#8fc9c9" transform="rotate(-30 115 60)"/>
+      
+      <!-- J shape -->
+      <path d="M 180 20 L 180 90 Q 180 110, 160 110 Q 140 110, 140 90" fill="none" stroke="#c9a87f" stroke-width="18" stroke-linecap="round"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="400" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="#3f4f4f">Celo</text>
+  <text x="400" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" fill="#5f6f6f">MiniMarket</text>
+</svg>

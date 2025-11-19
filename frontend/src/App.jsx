@@ -96,8 +96,11 @@ export default function App() {
     <div className="app-container">
       <div className="header">
         <div className="header-content">
-          <h1>🛍️ Celo MiniMarket</h1>
-          <p className="tagline">Your Mobile Peer-to-Peer Marketplace</p>
+          <img src="/logo.svg" alt="Celo MiniMarket Logo" className="header-logo" />
+          <div>
+            <h1>Celo MiniMarket</h1>
+            <p className="tagline">Your Mobile Peer-to-Peer Marketplace</p>
+          </div>
         </div>
         {address
           ? <button className="btn btn-disconnect" onClick={destroy}>
