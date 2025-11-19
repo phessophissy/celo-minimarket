@@ -52,15 +52,36 @@ export default function App() {
     }
   }, [kit?.connection?.web3?.currentProvider])
 
-  const getSigner = async () => provider ? await provider.getSigner() : null
+  const getSigner = async () => {
+    if (!provider) return null
+    try {
+      const signer = await provider.getSigner()
+      // Verify we have a valid address
+      const signerAddress = await signer.getAddress()
+      if (!signerAddress || !ethers.utils.isAddress(signerAddress)) {
+        console.warn('Invalid signer address:', signerAddress)
+        return null
+      }
+      return signer
+    } catch (error) {
+      console.error('Error getting signer:', error)
+      return null
+    }
+  }
 
   const market = async () => {
     const signer = await getSigner()
-    return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer ?? undefined)
+    if (!signer && !provider) {
+      throw new Error('No provider or signer available')
+    }
+    return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer ?? provider)
   }
   const cusd = async () => {
     const signer = await getSigner()
-    return new ethers.Contract(CUSD_ADDRESS, erc20Abi, signer ?? undefined)
+    if (!signer && !provider) {
+      throw new Error('No provider or signer available')
+    }
+    return new ethers.Contract(CUSD_ADDRESS, erc20Abi, signer ?? provider)
   }
 
   const loadProducts = async () => {
