@@ -39,25 +39,21 @@ if (typeof window !== 'undefined') {
     return provider
   }
 
-  // Patch existing ethereum provider
-  if (window.ethereum) {
-    patchProvider(window.ethereum)
-  }
+  // Wait for ethereum to be injected by extensions, then patch it
+  setTimeout(() => {
+    if (window.ethereum) {
+      patchProvider(window.ethereum)
+    }
+  }, 100)
 
-  // Intercept ethereum property to patch any new providers
-  let currentProvider = window.ethereum
-  Object.defineProperty(window, 'ethereum', {
-    get() {
-      return currentProvider
-    },
-    set(provider) {
-      currentProvider = patchProvider(provider)
-    },
-    configurable: true,
-    enumerable: true
+  // Also watch for ethereum injection with event listener
+  window.addEventListener('ethereum#initialized', () => {
+    if (window.ethereum) {
+      patchProvider(window.ethereum)
+    }
   })
 
-  // Also handle window.web3 if it exists (legacy)
+  // Legacy web3 support
   if (window.web3 && window.web3.currentProvider) {
     patchProvider(window.web3.currentProvider)
   }
