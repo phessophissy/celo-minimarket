@@ -41,8 +41,9 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (!provider) return;
     loadProducts()
-  }, [provider])
+    }, [provider])
 
   const addProduct = async (e) => {
     e.preventDefault()

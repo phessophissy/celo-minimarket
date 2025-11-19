@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import { ContractKitProvider, Mainnet, NetworkNames } from '@celo-tools/use-contractkit'
+import { ContractKitProvider, Alfajores, Mainnet } from '@celo-tools/use-contractkit'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -9,17 +9,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       dapp={{
         name: 'Celo MiniMarket',
         description: 'On-chain community marketplace',
-        url: 'https://yourdomain.com',
+        url: 'https://celo-minimarket.vercel.app',
         icon: 'https://placehold.co/64',
       }}
-      network={{
-        name: NetworkNames.Mainnet,
-        rpcUrl: 'https://forno.celo.org',
-        explorer: 'https://celoscan.io',
-        chainId: 42220,
-      }}
-      networks={[Mainnet]}
-      defaultNetwork={Mainnet}
+      networks={[Mainnet, Alfajores]}
+      network={Mainnet}
     >
       <App />
     </ContractKitProvider>
