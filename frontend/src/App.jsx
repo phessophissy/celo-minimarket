@@ -8,7 +8,7 @@ const MARKET_ADDRESS = '0x1C824627899cFaeB4bb68101efa022917c93b923'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
 
 
-const CELO_RPC_URL = 'https://1rpc.io/celo'
+const CELO_RPC_URL = 'https://rpc.ankr.com/celo'
 const erc20Abi = [
   "function decimals() view returns (uint8)",
   "function transfer(address to, uint256 amount) returns (bool)"
@@ -112,6 +112,12 @@ export default function App() {
 
   const getSigner = async () => {
     if (!provider) return null
+    
+    // Force use of wallet provider for transactions
+    if (!window.ethereum) {
+      console.error("No wallet detected")
+      return null
+    }
     if (!connectedAccount || !ethers.utils.isAddress(connectedAccount)) {
       console.warn('No valid connected account:', connectedAccount)
       return null
@@ -126,12 +132,13 @@ export default function App() {
     }
   }
 
-  const market = async () => {
+    const market = async () => {
     const signer = await getSigner()
-    if (!signer && !provider) {
-      throw new Error('No provider or signer available')
+    if (!signer) {
+      // For write operations, we MUST have a signer
+      throw new Error("Please connect your wallet to perform this action")
     }
-    return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer ?? provider)
+    return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer)
   }
   const cusd = async () => {
     const signer = await getSigner()
@@ -144,7 +151,7 @@ export default function App() {
   const loadProducts = async () => {
     if (!provider) return
     try {
-      const m = await market()
+      const m = marketReadOnly()
       const list = await m.getActiveProducts(); console.log("Raw getActiveProducts response:", list, "Type:", typeof list, "IsArray:", Array.isArray(list))
       
       // Ensure list is an array
@@ -289,6 +296,11 @@ export default function App() {
     </div>
   )
 }
+
+
+
+
+
 
 
 

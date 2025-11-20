@@ -16,11 +16,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       networks={[Mainnet, Alfajores]}
       network={{
         ...Mainnet,
-        rpcUrl: 'https://1rpc.io/celo'
+        rpcUrl: 'https://rpc.ankr.com/celo'
       }}
     >
       <App />
     </ContractKitProvider>
   </React.StrictMode>
 )
+
 
