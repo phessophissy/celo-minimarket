@@ -144,10 +144,17 @@ export default function App() {
     try {
       const m = await market()
       const list = await m.getActiveProducts()
-      setProducts(list)
+      
+      // Ensure list is an array
+      if (Array.isArray(list)) {
+        setProducts(list)
+      } else {
+        console.warn('getActiveProducts did not return an array:', list)
+        setProducts([])
+      }
     } catch (error) {
       console.error('Error loading products:', error)
-      // Don't throw, just log - allow app to continue
+      setProducts([]) // Set empty array on error
     }
   }
 
@@ -260,7 +267,7 @@ export default function App() {
         <h2>🛒 Available Products</h2>
         {products.length === 0 && <p className="empty-state">No products listed yet. Be the first vendor! 🚀</p>}
         <div className="products-grid">
-          {products.map((p) => (
+          {Array.isArray(products) && products.map((p) => (
             <div key={Number(p.id)} className="product-card">
               <h3>{p.name}</h3>
               <p className="product-description">{p.description}</p>
