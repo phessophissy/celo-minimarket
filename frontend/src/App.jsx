@@ -19,6 +19,62 @@ export default function App() {
   const [decimals, setDecimals] = useState(18)
   const [loading, setLoading] = useState(false)
   const [providerError, setProviderError] = useState(null)
+  const [connectedAccount, setConnectedAccount] = useState(null)
+
+  // Wait for wallet to properly connect and get account
+  useEffect(() => {
+    const getAccount = async () => {
+      if (!kit?.connection?.web3?.currentProvider) {
+        setConnectedAccount(null)
+        return
+      }
+
+      try {
+        const provider = kit.connection.web3.currentProvider
+        
+        // Try multiple methods to get the account
+        let account = null
+        
+        // Method 1: Use address from ContractKit
+        if (address && ethers.utils.isAddress(address)) {
+          account = address
+        }
+        // Method 2: Check provider.selectedAddress
+        else if (provider.selectedAddress && ethers.utils.isAddress(provider.selectedAddress)) {
+          account = provider.selectedAddress
+        }
+        // Method 3: Request accounts from provider
+        else if (provider.request) {
+          try {
+            const accounts = await provider.request({ method: 'eth_accounts' })
+            if (accounts && accounts.length > 0 && ethers.utils.isAddress(accounts[0])) {
+              account = accounts[0]
+            }
+          } catch (err) {
+            console.warn('Could not get accounts:', err)
+          }
+        }
+        // Method 4: Legacy web3 accounts
+        else if (window.ethereum) {
+          try {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+            if (accounts && accounts.length > 0 && ethers.utils.isAddress(accounts[0])) {
+              account = accounts[0]
+            }
+          } catch (err) {
+            console.warn('Could not get accounts from window.ethereum:', err)
+          }
+        }
+
+        setConnectedAccount(account)
+      } catch (error) {
+        console.error('Error getting account:', error)
+        setConnectedAccount(null)
+      }
+    }
+
+    getAccount()
+  }, [address, kit?.connection?.web3?.currentProvider])
 
   const provider = useMemo(() => {
     if (!kit?.connection?.web3?.currentProvider) return null
@@ -54,13 +110,13 @@ export default function App() {
 
   const getSigner = async () => {
     if (!provider) return null
-    if (!address || !ethers.utils.isAddress(address)) {
-      console.warn('No valid address from ContractKit:', address)
+    if (!connectedAccount || !ethers.utils.isAddress(connectedAccount)) {
+      console.warn('No valid connected account:', connectedAccount)
       return null
     }
     
     try {
-      const signer = await provider.getSigner(address)
+      const signer = await provider.getSigner(connectedAccount)
       return signer
     } catch (error) {
       console.error('Error getting signer:', error)
@@ -133,9 +189,9 @@ export default function App() {
             <p className="tagline">Your Mobile Peer-to-Peer Marketplace</p>
           </div>
         </div>
-        {address
+        {connectedAccount
           ? <button className="btn btn-disconnect" onClick={destroy}>
-              🔌 Disconnect ({address.slice(0,6)}…)
+              🔌 Disconnect ({connectedAccount.slice(0,6)}…)
             </button>
           : <button className="btn btn-connect" onClick={connect}>
               🔗 Connect Wallet
@@ -181,7 +237,7 @@ export default function App() {
             onChange={e=>setForm(f=>({...f,description:e.target.value}))} 
             required
           />
-          <button disabled={!address || loading} type="submit" className="btn btn-primary">
+          <button disabled={!connectedAccount || loading} type="submit" className="btn btn-primary">
             {loading ? '⏳ Adding…' : '✨ Add Product'}
           </button>
         </form>
@@ -198,7 +254,7 @@ export default function App() {
               <p className="product-price">💰 {ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</p>
               <p className="product-vendor">👤 Vendor: {p.vendor.slice(0,8)}...{p.vendor.slice(-6)}</p>
               <button 
-                disabled={loading || !address} 
+                disabled={loading || !connectedAccount} 
                 onClick={() => buyNow(p.vendor, p.priceWei)}
                 className="btn btn-secondary"
               >
