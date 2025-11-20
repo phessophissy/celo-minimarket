@@ -110,21 +110,23 @@ export default function App() {
     }
   }, [kit?.connection?.web3?.currentProvider])
 
-  const getSigner = async () => {
-    if (!provider) return null
-    
-    // Force use of wallet provider for transactions
+    const getSigner = async () => {
+    // Force use of wallet provider directly, bypass any RPC
     if (!window.ethereum) {
       console.error("No wallet detected")
       return null
     }
+    
     if (!connectedAccount || !ethers.utils.isAddress(connectedAccount)) {
       console.warn('No valid connected account:', connectedAccount)
       return null
     }
-    
+
     try {
-      const signer = await provider.getSigner(connectedAccount)
+      // Create fresh provider directly from wallet, NOT from ContractKit
+      const walletProvider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+      const signer = await walletProvider.getSigner()
+      console.log('Using wallet signer:', await signer.getAddress())
       return signer
     } catch (error) {
       console.error('Error getting signer:', error)
@@ -296,6 +298,7 @@ export default function App() {
     </div>
   )
 }
+
 
 
 
