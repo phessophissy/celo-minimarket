@@ -14,9 +14,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         icon: 'https://celo-minimarket.vercel.app/logo.svg',
       }}
       networks={[Mainnet, Alfajores]}
-      network={Mainnet}
+      network={{
+        ...Mainnet,
+        rpcUrl: 'https://1rpc.io/celo'
+      }}
     >
       <App />
     </ContractKitProvider>
   </React.StrictMode>
 )
+
