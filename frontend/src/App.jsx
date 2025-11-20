@@ -158,15 +158,28 @@ export default function App() {
 
   const addProduct = async (e) => {
     e.preventDefault()
+    if (!connectedAccount) {
+      alert('❌ Please connect your wallet first!')
+      return
+    }
+    
     const priceWei = ethers.utils.parseUnits(form.price || '0', decimals)
     setLoading(true)
     try {
       const m = await market()
       const tx = await m.addProduct(form.name, priceWei, form.description)
+      console.log('Transaction sent:', tx.hash)
       await tx.wait()
+      console.log('Transaction confirmed!')
+      alert('✅ Product added successfully!')
       setForm({ name: '', price: '', description: '' })
       await loadProducts()
-    } finally { setLoading(false) }
+    } catch (error) {
+      console.error('Error adding product:', error)
+      alert('❌ Failed to add product: ' + (error.message || error))
+    } finally { 
+      setLoading(false) 
+    }
   }
 
   const buyNow = async (vendor, priceWei) => {
