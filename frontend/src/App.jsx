@@ -17,7 +17,7 @@ const erc20Abi = [
 export default function App() {
   const { address, kit, connect, destroy } = useContractKit()
   const [products, setProducts] = useState([])
-  const [form, setForm] = useState({ name: '', price: '', description: '' })
+  const [form, setForm] = useState({ name: '', price: '', description: '', imageUrl: '' })
   const [decimals, setDecimals] = useState(18)
   const [loading, setLoading] = useState(false)
   const [providerError, setProviderError] = useState(null)
@@ -185,12 +185,14 @@ export default function App() {
     setLoading(true)
     try {
       const m = await market()
-      const tx = await m.addProduct(form.name, priceWei, form.description)
+      // Encode image URL into description
+      const encodedDescription = form.imageUrl ? `[IMG:${form.imageUrl}]${form.description}` : form.description
+      const tx = await m.addProduct(form.name, priceWei, encodedDescription)
       console.log('Transaction sent:', tx.hash)
       await tx.wait()
       console.log('Transaction confirmed!')
       alert('✅ Product added successfully!')
-      setForm({ name: '', price: '', description: '' })
+      setForm({ name: '', price: '', description: '', imageUrl: '' })
       await loadProducts()
     } catch (error) {
       console.error('Error adding product:', error)
@@ -262,7 +264,13 @@ export default function App() {
             onChange={e=>setForm(f=>({...f,price:e.target.value}))} 
             required
           />
-          <textarea 
+          <input
+              type="text"
+              placeholder="Product Image URL (e.g., https://example.com/image.jpg)"
+              value={form.imageUrl}
+              onChange={e=>setForm(f=>({...f,imageUrl:e.target.value}))}
+            />
+            <textarea 
             placeholder="Product Description"
             value={form.description}
             onChange={e=>setForm(f=>({...f,description:e.target.value}))} 
@@ -281,7 +289,26 @@ export default function App() {
           {Array.isArray(products) && products.map((p) => (
             <div key={Number(p.id)} className="product-card">
               <h3>{p.name}</h3>
-              <p className="product-description">{p.description}</p>
+              {(() => {
+                const imgMatch = p.description.match(/^\[IMG:(.*?)\]/)
+                const imageUrl = imgMatch ? imgMatch[1] : null
+                const actualDescription = imgMatch ? p.description.replace(/^\[IMG:.*?\]/, '') : p.description
+                return (
+                  <>
+                    {imageUrl && (
+                      <img 
+                        src={imageUrl} 
+                        alt={p.name} 
+                        className="product-image"
+                        onError={(e) => e.target.style.display = 'none'}
+                      />
+                    )}
+                    <h3>{p.name}</h3>
+                    <p className="product-description">{actualDescription}</p>
+                  </>
+                )
+              })()}
+              
               <p className="product-price">💰 {ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</p>
               <p className="product-vendor">👤 Vendor: {p.vendor.slice(0,8)}...{p.vendor.slice(-6)}</p>
               <button 
@@ -298,6 +325,11 @@ export default function App() {
     </div>
   )
 }
+
+
+
+
+
 
 
 
