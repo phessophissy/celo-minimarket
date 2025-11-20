@@ -143,7 +143,7 @@ export default function App() {
     if (!provider) return
     try {
       const m = await market()
-      const list = await m.getActiveProducts()
+      const list = await m.getActiveProducts(); console.log("Raw getActiveProducts response:", list, "Type:", typeof list, "IsArray:", Array.isArray(list))
       
       // Ensure list is an array
       if (Array.isArray(list)) {
