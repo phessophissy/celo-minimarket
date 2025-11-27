@@ -189,24 +189,19 @@ export default function App() {
       return
     }
 
-    // Validate file size (max 100KB for on-chain storage)
-    if (file.size > 100 * 1024) {
-      alert('❌ Image size must be less than 100KB for on-chain storage. Please use a smaller image or compress it.')
-      return
-    }
-
     const reader = new FileReader()
     reader.onloadend = () => {
       const base64String = reader.result
       
-      // Additional check for base64 length (approx 50KB encoded)
-      if (base64String.length > 70000) {
-        alert('❌ Encoded image is too large for on-chain storage. Please use a much smaller image (recommend < 50KB)')
-        return
-      }
-      
-      setForm(f => ({ ...f, imageUrl: base64String }))
+      // For on-chain storage, we'll just use preview locally
+      // but require users to use URLs for actual submission
       setImagePreview(base64String)
+      
+      // Don't set imageUrl - force user to use URL method
+      alert('⚠️ On-chain image storage is too expensive. Please use "Image URL" method instead.\n\nUpload your image to a free service like:\n• imgur.com\n• cloudinary.com\n• imgbb.com\n\nThen paste the URL here.')
+      
+      // Reset to URL method
+      setUploadMethod('url')
     }
     reader.readAsDataURL(file)
   }
@@ -349,18 +344,23 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">Image URL</option>
-                <option value="file">Upload File</option>
+                <option value="url">Image URL (Recommended)</option>
+                <option value="file">Upload File (Not Supported - Use URL)</option>
               </select>
             </label>
 
             {uploadMethod === 'url' ? (
-              <input
-                type="text"
-                placeholder="Product Image URL (e.g., https://example.com/image.jpg)"
-                value={form.imageUrl}
-                onChange={e => handleImageUrlChange(e.target.value)}
-              />
+              <div>
+                <input
+                  type="text"
+                  placeholder="Product Image URL (e.g., https://i.imgur.com/abc123.jpg)"
+                  value={form.imageUrl}
+                  onChange={e => handleImageUrlChange(e.target.value)}
+                />
+                <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem'}}>
+                  💡 Upload your image to imgur.com, imgbb.com, or cloudinary.com, then paste the URL here
+                </p>
+              </div>
             ) : (
               <div className="file-upload-container">
                 <label htmlFor="image-upload" className="file-upload-label">
