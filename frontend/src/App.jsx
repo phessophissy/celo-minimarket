@@ -155,8 +155,10 @@ export default function App() {
   const loadProducts = async () => {
     if (!provider) return
     try {
-      const m = marketReadOnly()
-      const list = await m.getActiveProducts(); console.log("Raw getActiveProducts response:", list, "Type:", typeof list, "IsArray:", Array.isArray(list))
+      // Use provider for read-only operations
+      const m = new ethers.Contract(MARKET_ADDRESS, marketAbi, provider)
+      const list = await m.getActiveProducts()
+      console.log("Raw getActiveProducts response:", list, "Type:", typeof list, "IsArray:", Array.isArray(list))
       
       // Ensure list is an array
       if (Array.isArray(list)) {
