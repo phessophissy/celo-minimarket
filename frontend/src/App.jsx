@@ -189,15 +189,22 @@ export default function App() {
       return
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('❌ Image size must be less than 2MB')
+    // Validate file size (max 100KB for on-chain storage)
+    if (file.size > 100 * 1024) {
+      alert('❌ Image size must be less than 100KB for on-chain storage. Please use a smaller image or compress it.')
       return
     }
 
     const reader = new FileReader()
     reader.onloadend = () => {
       const base64String = reader.result
+      
+      // Additional check for base64 length (approx 50KB encoded)
+      if (base64String.length > 70000) {
+        alert('❌ Encoded image is too large for on-chain storage. Please use a much smaller image (recommend < 50KB)')
+        return
+      }
+      
       setForm(f => ({ ...f, imageUrl: base64String }))
       setImagePreview(base64String)
     }
@@ -357,7 +364,7 @@ export default function App() {
             ) : (
               <div className="file-upload-container">
                 <label htmlFor="image-upload" className="file-upload-label">
-                  📷 Choose Image (Max 2MB)
+                  📷 Choose Image (Max 100KB - On-Chain Storage)
                 </label>
                 <input
                   id="image-upload"
@@ -366,6 +373,9 @@ export default function App() {
                   onChange={handleImageUpload}
                   className="file-upload-input"
                 />
+                <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem', textAlign: 'center'}}>
+                  ⚠️ For on-chain storage, use very small images (&lt;100KB). Consider using image URLs for larger images.
+                </p>
               </div>
             )}
 
