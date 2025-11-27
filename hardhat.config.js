@@ -14,8 +14,8 @@ export default {
   },
   networks: {
     celo: {
-      url: process.env.CELO_MAINNET_RPC,
-      accounts: [process.env.PRIVATE_KEY],
+      url: process.env.CELO_MAINNET_RPC || 'https://rpc.ankr.com/celo',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 42220,
     },
   },

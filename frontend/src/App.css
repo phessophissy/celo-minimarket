@@ -7,11 +7,113 @@ body {
   font-family: 'Century Gothic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-style: italic;
   font-weight: bold;
-  background: linear-gradient(135deg, #1a2f23 0%, #2d4a3e 50%, #1e3a2f 100%);
+  background: linear-gradient(135deg, #0a1f1a 0%, #1a3d2e 25%, #2d4a3e 50%, #1e3a2f 75%, #0f2620 100%);
   min-height: 100vh;
   color: #e8f5e9;
-  animation: gradientShift 15s ease infinite;
-  background-size: 200% 200%;
+  animation: gradientShift 20s ease infinite;
+  background-size: 400% 400%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Floating Balloons */
+.balloon {
+  position: fixed;
+  width: 80px;
+  height: 100px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 30% 30%, rgba(102, 187, 106, 0.4), rgba(46, 125, 50, 0.2));
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(129, 199, 132, 0.3);
+  box-shadow: 
+    inset -10px -10px 20px rgba(0, 0, 0, 0.2),
+    inset 10px 10px 20px rgba(255, 255, 255, 0.1),
+    0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: float 15s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.balloon::before {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(129, 199, 132, 0.5), transparent);
+}
+
+.balloon::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: rgba(165, 214, 167, 0.3);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.balloon:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 12s;
+}
+
+.balloon:nth-child(2) {
+  left: 25%;
+  animation-delay: 2s;
+  animation-duration: 15s;
+  background: radial-gradient(circle at 30% 30%, rgba(76, 175, 80, 0.35), rgba(56, 142, 60, 0.2));
+}
+
+.balloon:nth-child(3) {
+  left: 45%;
+  animation-delay: 4s;
+  animation-duration: 18s;
+  background: radial-gradient(circle at 30% 30%, rgba(129, 199, 132, 0.4), rgba(102, 187, 106, 0.2));
+}
+
+.balloon:nth-child(4) {
+  left: 65%;
+  animation-delay: 1s;
+  animation-duration: 14s;
+  background: radial-gradient(circle at 30% 30%, rgba(165, 214, 167, 0.35), rgba(129, 199, 132, 0.2));
+}
+
+.balloon:nth-child(5) {
+  left: 80%;
+  animation-delay: 3s;
+  animation-duration: 16s;
+  background: radial-gradient(circle at 30% 30%, rgba(102, 187, 106, 0.4), rgba(76, 175, 80, 0.2));
+}
+
+.balloon:nth-child(6) {
+  left: 90%;
+  animation-delay: 5s;
+  animation-duration: 13s;
+  background: radial-gradient(circle at 30% 30%, rgba(56, 142, 60, 0.35), rgba(46, 125, 50, 0.2));
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 @keyframes gradientShift {
@@ -25,6 +127,8 @@ body {
   margin: 0 auto;
   padding: 2rem 1rem;
   animation: fadeIn 0.6s ease-in;
+  position: relative;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {
@@ -546,5 +650,182 @@ div[role="dialog"] a:hover {
   color: #81c784 !important;
   text-decoration: underline !important;
 }
+
+/* Image Upload Styles */
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.upload-method-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: #c8e6c9;
+}
+
+.upload-method-select {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid rgba(129, 199, 132, 0.3);
+  border-radius: 10px;
+  background: rgba(30, 58, 47, 0.6);
+  color: #e8f5e9;
+  font-size: 1rem;
+  font-family: inherit;
+  font-style: italic;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-method-select:focus {
+  outline: none;
+  border-color: #66bb6a;
+  background: rgba(30, 58, 47, 0.8);
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(129, 199, 132, 0.3);
+}
+
+.file-upload-label:hover {
+  background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.file-upload-input {
+  display: none;
+}
+
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(30, 58, 47, 0.4);
+  border-radius: 10px;
+  border: 2px dashed rgba(129, 199, 132, 0.3);
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  object-fit: contain;
+}
+
+.btn-clear-image {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #d32f2f 0%, #e53935 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-clear-image:hover {
+  background: linear-gradient(135deg, #e53935 0%, #f44336 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+}
+
+/* NFT Badge */
+.nft-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(103, 58, 183, 0.3) 100%);
+  border: 2px solid rgba(171, 71, 188, 0.5);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #e1bee7;
+  text-align: center;
+  margin: 0.75rem 0;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+  animation: nftPulse 2s ease-in-out infinite;
+  letter-spacing: 0.5px;
+}
+
+@keyframes nftPulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+    border-color: rgba(171, 71, 188, 0.5);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(156, 39, 176, 0.5);
+    border-color: rgba(171, 71, 188, 0.8);
+  }
+}
+
+/* Enhanced gradients for modern look */
+.header {
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(102, 187, 106, 0.8) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4), 
+    inset 0 2px 8px rgba(255, 255, 255, 0.15),
+    0 0 60px rgba(76, 175, 80, 0.2);
+}
+
+.description-card {
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.25) 0%, rgba(102, 187, 106, 0.2) 100%);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 4px rgba(255, 255, 255, 0.1),
+    0 0 40px rgba(129, 199, 132, 0.15);
+}
+
+.product-card {
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.25) 0%, rgba(102, 187, 106, 0.2) 100%);
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1),
+    0 0 30px rgba(129, 199, 132, 0.1);
+}
+
+.product-card:hover {
+  box-shadow: 
+    0 12px 40px rgba(76, 175, 80, 0.5),
+    inset 0 1px 3px rgba(255, 255, 255, 0.15),
+    0 0 50px rgba(129, 199, 132, 0.3);
+}
+
+.section {
+  background: linear-gradient(135deg, rgba(46, 125, 50, 0.2) 0%, rgba(102, 187, 106, 0.15) 100%);
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 4px rgba(255, 255, 255, 0.08),
+    0 0 40px rgba(129, 199, 132, 0.1);
+}
+
 
 
