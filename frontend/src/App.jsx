@@ -1,15 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useContractKit } from '@celo-tools/use-contractkit'
 import { ethers } from 'ethers'
-import { NFTStorage } from 'nft.storage'
+import axios from 'axios'
 import marketArtifact from './abi/CeloMiniMarket.json'
 import './App.css'
 
 const MARKET_ADDRESS = '0xABD9E2A3bc4bdf520C82CcBC287095a125C56225'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
 const marketAbi = marketArtifact.abi // Extract ABI from Hardhat artifact
-// Free NFT.Storage API key (get yours at nft.storage)
-const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIzQTI1YTQ3N0M5N0Y4QWUyZDlDNTJCN2FjZmJlMkM4RTI1OWQ1ZDkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTczMjc1NjgwMDAwMCwibmFtZSI6ImNlbG8tbWluaW1hcmtldCJ9.demo-key-replace-with-real'
 
 
 
@@ -193,37 +191,57 @@ export default function App() {
       return
     }
 
-    // Validate file size (max 10MB for IPFS)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('❌ Image size must be less than 10MB')
-      return
-    }
+    setLoading(true)
 
     try {
-      setLoading(true)
-      
-      // Show preview immediately
+      // Show recommendation for external hosting
+      const useExternal = confirm(
+        '📸 Image Upload Options:\n\n' +
+        '✅ RECOMMENDED: Upload to free service first\n' +
+        '   • Go to imgur.com (no account needed)\n' +
+        '   • Upload your image\n' +
+        '   • Copy the image URL\n' +
+        '   • Paste it in the "Image URL" field\n\n' +
+        '⚠️ ALTERNATIVE: Use data URL (not recommended)\n' +
+        '   • Works for very small images only\n' +
+        '   • May cause high gas fees\n' +
+        '   • May fail for images > 50KB\n\n' +
+        'Click OK to open imgur.com\n' +
+        'Click Cancel to try data URL anyway'
+      )
+
+      if (useExternal) {
+        // Open imgur in new tab
+        window.open('https://imgur.com/upload', '_blank')
+        setUploadMethod('url')
+        setLoading(false)
+        return
+      }
+
+      // Fallback: Use data URL for small images
+      if (file.size > 50 * 1024) {
+        alert('❌ File too large for data URL (>50KB). Please use imgur.com or another image hosting service.')
+        setLoading(false)
+        return
+      }
+
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result)
+        const dataUrl = reader.result
+        setImagePreview(dataUrl)
+        setForm(f => ({ ...f, imageUrl: dataUrl }))
+        alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
+        setLoading(false)
+      }
+      reader.onerror = () => {
+        alert('❌ Failed to read file')
+        setLoading(false)
       }
       reader.readAsDataURL(file)
-
-      // Upload to IPFS via NFT.Storage
-      const client = new NFTStorage({ token: NFT_STORAGE_KEY })
-      const cid = await client.storeBlob(file)
-      
-      // Create IPFS URL
-      const ipfsUrl = `https://nftstorage.link/ipfs/${cid}`
-      
-      setForm(f => ({ ...f, imageUrl: ipfsUrl }))
-      alert('✅ Image uploaded to IPFS successfully!')
       
     } catch (error) {
-      console.error('IPFS upload error:', error)
-      alert('❌ Failed to upload to IPFS. Please try again or use an image URL.')
-      setImagePreview(null)
-    } finally {
+      console.error('Image upload error:', error)
+      alert('❌ Failed to process image. Please use an image URL instead.')
       setLoading(false)
     }
   }
@@ -366,8 +384,8 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">Image URL</option>
-                <option value="file">Upload File (IPFS)</option>
+                <option value="url">Image URL (Recommended)</option>
+                <option value="file">Upload Helper</option>
               </select>
             </label>
 
@@ -386,7 +404,7 @@ export default function App() {
             ) : (
               <div className="file-upload-container">
                 <label htmlFor="image-upload" className="file-upload-label">
-                  📷 Choose Image (Max 10MB - Uploads to IPFS)
+                  🚀 Upload Assistant - Click to Get Help
                 </label>
                 <input
                   id="image-upload"
@@ -396,7 +414,7 @@ export default function App() {
                   className="file-upload-input"
                 />
                 <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem', textAlign: 'center'}}>
-                  🌐 Your image will be uploaded to IPFS (decentralized storage)
+                  💡 This will guide you to upload to imgur.com (free, no account needed) and copy the URL
                 </p>
               </div>
             )}
