@@ -1,12 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useContractKit } from '@celo-tools/use-contractkit'
 import { ethers } from 'ethers'
+import { NFTStorage } from 'nft.storage'
 import marketArtifact from './abi/CeloMiniMarket.json'
 import './App.css'
 
 const MARKET_ADDRESS = '0xABD9E2A3bc4bdf520C82CcBC287095a125C56225'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
 const marketAbi = marketArtifact.abi // Extract ABI from Hardhat artifact
+// Free NFT.Storage API key (get yours at nft.storage)
+const NFT_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGIzQTI1YTQ3N0M5N0Y4QWUyZDlDNTJCN2FjZmJlMkM4RTI1OWQ1ZDkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTczMjc1NjgwMDAwMCwibmFtZSI6ImNlbG8tbWluaW1hcmtldCJ9.demo-key-replace-with-real'
+
 
 
 const CELO_RPC_URL = 'https://rpc.ankr.com/celo'
@@ -179,7 +183,7 @@ export default function App() {
     loadProducts()
     }, [provider])
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
@@ -189,21 +193,39 @@ export default function App() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const base64String = reader.result
-      
-      // For on-chain storage, we'll just use preview locally
-      // but require users to use URLs for actual submission
-      setImagePreview(base64String)
-      
-      // Don't set imageUrl - force user to use URL method
-      alert('⚠️ On-chain image storage is too expensive. Please use "Image URL" method instead.\n\nUpload your image to a free service like:\n• imgur.com\n• cloudinary.com\n• imgbb.com\n\nThen paste the URL here.')
-      
-      // Reset to URL method
-      setUploadMethod('url')
+    // Validate file size (max 10MB for IPFS)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('❌ Image size must be less than 10MB')
+      return
     }
-    reader.readAsDataURL(file)
+
+    try {
+      setLoading(true)
+      
+      // Show preview immediately
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+
+      // Upload to IPFS via NFT.Storage
+      const client = new NFTStorage({ token: NFT_STORAGE_KEY })
+      const cid = await client.storeBlob(file)
+      
+      // Create IPFS URL
+      const ipfsUrl = `https://nftstorage.link/ipfs/${cid}`
+      
+      setForm(f => ({ ...f, imageUrl: ipfsUrl }))
+      alert('✅ Image uploaded to IPFS successfully!')
+      
+    } catch (error) {
+      console.error('IPFS upload error:', error)
+      alert('❌ Failed to upload to IPFS. Please try again or use an image URL.')
+      setImagePreview(null)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleImageUrlChange = (url) => {
@@ -344,8 +366,8 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">Image URL (Recommended)</option>
-                <option value="file">Upload File (Not Supported - Use URL)</option>
+                <option value="url">Image URL</option>
+                <option value="file">Upload File (IPFS)</option>
               </select>
             </label>
 
@@ -358,13 +380,13 @@ export default function App() {
                   onChange={e => handleImageUrlChange(e.target.value)}
                 />
                 <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem'}}>
-                  💡 Upload your image to imgur.com, imgbb.com, or cloudinary.com, then paste the URL here
+                  💡 Or upload directly from your device using "Upload File (IPFS)" option above
                 </p>
               </div>
             ) : (
               <div className="file-upload-container">
                 <label htmlFor="image-upload" className="file-upload-label">
-                  📷 Choose Image (Max 100KB - On-Chain Storage)
+                  📷 Choose Image (Max 10MB - Uploads to IPFS)
                 </label>
                 <input
                   id="image-upload"
@@ -374,7 +396,7 @@ export default function App() {
                   className="file-upload-input"
                 />
                 <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem', textAlign: 'center'}}>
-                  ⚠️ For on-chain storage, use very small images (&lt;100KB). Consider using image URLs for larger images.
+                  🌐 Your image will be uploaded to IPFS (decentralized storage)
                 </p>
               </div>
             )}
