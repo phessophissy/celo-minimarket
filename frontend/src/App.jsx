@@ -103,56 +103,68 @@ export default function App() {
       return
     }
 
-    // Check file size (recommend under 200KB for on-chain storage)
-    if (file.size > 200 * 1024) {
-      const useAnyway = confirm(
-        '⚠️ Image is larger than 200KB.\n\n' +
-        'Large images will cost more gas fees.\n\n' +
-        'Recommendations:\n' +
-        '• Use "Paste Image URL" option instead\n' +
-        '• Upload to imgur.com, postimages.org, or imgbb.com\n' +
-        '• Then paste the image URL\n\n' +
-        'Click OK to proceed anyway\n' +
-        'Click Cancel to switch to URL input'
-      )
-      
-      if (!useAnyway) {
-        setUploadMethod('url')
-        return
-      }
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('❌ Image too large. Please use an image under 10MB.')
+      return
     }
 
     setLoading(true)
     
     try {
-      // Convert to base64 data URL
-      const reader = new FileReader()
+      // Upload to Cloudinary (free tier, no API key required for unsigned uploads)
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', 'ml_default') // Cloudinary's demo preset
       
-      reader.onloadend = () => {
-        const dataUrl = reader.result
-        setImagePreview(dataUrl)
-        setForm(f => ({ ...f, imageUrl: dataUrl }))
-        
-        if (file.size > 200 * 1024) {
-          alert('✅ Image loaded! Note: Large images will increase gas costs when adding product.')
-        } else {
-          alert('✅ Image loaded successfully!')
-        }
-        setLoading(false)
+      const response = await fetch('https://api.cloudinary.com/v1_1/demo/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+      
+      if (!response.ok) {
+        throw new Error('Upload failed')
       }
       
-      reader.onerror = () => {
-        alert('❌ Failed to read file. Please try again or use URL input.')
-        setLoading(false)
-        setUploadMethod('url')
-      }
+      const data = await response.json()
       
-      reader.readAsDataURL(file)
+      if (data.secure_url) {
+        const imageUrl = data.secure_url
+        setImagePreview(imageUrl)
+        setForm(f => ({ ...f, imageUrl }))
+        alert('✅ Image uploaded successfully to cloud hosting!')
+        setLoading(false)
+      } else {
+        throw new Error('No URL returned')
+      }
     } catch (error) {
-      console.error('Error:', error)
-      alert('❌ Failed to process image. Please try using URL input instead.')
-      setLoading(false)
+      console.error('Upload error:', error)
+      
+      // Fallback: Try alternative method with File.io (temporary hosting)
+      try {
+        const formData2 = new FormData()
+        formData2.append('file', file)
+        
+        const response2 = await fetch('https://file.io', {
+          method: 'POST',
+          body: formData2
+        })
+        
+        const data2 = await response2.json()
+        
+        if (data2.success && data2.link) {
+          alert('⚠️ Image uploaded to temporary hosting. For permanent storage, please use:\n\n• https://postimages.org\n• https://imgbb.com\n• https://imgur.com\n\nThen paste the URL in "Paste Image URL" option.')
+          setUploadMethod('url')
+          setLoading(false)
+          return
+        }
+      } catch (fallbackError) {
+        console.error('Fallback upload error:', fallbackError)
+      }
+      
+      alert('❌ Upload failed. Please use these free image hosting services:\n\n1. Go to https://postimages.org (easiest, no signup)\n2. Upload your image\n3. Copy the "Direct Link"\n4. Switch to "Paste Image URL" and paste it there\n\nAlternatives: imgur.com or imgbb.com')
       setUploadMethod('url')
+      setLoading(false)
     }
   }
 
@@ -286,8 +298,8 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">🔗 Paste Image URL (Recommended)</option>
-                <option value="file">📁 Upload File (Embed Direct)</option>
+                <option value="url">🔗 Paste Image URL (Manual)</option>
+                <option value="file">☁️ Upload to Cloud (Auto)</option>
               </select>
             </label>
 
@@ -317,7 +329,7 @@ export default function App() {
                   disabled={loading}
                 />
                 <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem', textAlign: 'center'}}>
-                  📦 Image will be embedded directly (works offline, but costs more gas). Keep under 200KB for best results.
+                  ☁️ Images uploaded to free cloud hosting (off-chain, saves gas costs)
                 </p>
               </div>
             )}
