@@ -103,56 +103,58 @@ export default function App() {
       return
     }
 
-    // Open imgur immediately (before any async operations to avoid popup blocker)
-    const imgurWindow = window.open('https://imgur.com/upload', '_blank')
+    // Show instructions first with confirmation
+    const proceed = confirm(
+      '📸 Imgur Upload Assistant\n\n' +
+      'Follow these steps:\n' +
+      '1. Click OK to open imgur.com in a new tab\n' +
+      '2. Upload your image on imgur.com\n' +
+      '3. Right-click the uploaded image\n' +
+      '4. Select "Copy image address"\n' +
+      '5. Come back here and paste it in the "Image URL" field\n\n' +
+      'Click OK to open Imgur now\n' +
+      'Click Cancel to use data URL instead (not recommended)'
+    )
 
-    // Show instructions
-    setTimeout(() => {
-      const proceed = confirm(
-        '📸 Imgur opened in a new tab!\n\n' +
-        'Follow these steps:\n' +
-        '1. Upload your image on imgur.com\n' +
-        '2. Right-click the uploaded image\n' +
-        '3. Select "Copy image address"\n' +
-        '4. Come back here and paste it in the "Image URL" field\n\n' +
-        'Click OK to switch to Image URL field\n' +
-        'Click Cancel to use data URL instead (not recommended)'
-      )
-
-      if (proceed) {
-        // Switch to URL input method
-        setUploadMethod('url')
-        // Focus on the URL input after a short delay
-        setTimeout(() => {
-          const urlInput = document.querySelector('input[type="text"][placeholder*="Image URL"]')
-          if (urlInput) urlInput.focus()
-        }, 100)
-      } else {
-        // Close imgur window if they chose Cancel
-        if (imgurWindow) imgurWindow.close()
-        
-        // Try data URL for small images
-        if (file.size > 50 * 1024) {
-          alert('❌ File too large for data URL (>50KB). Please use imgur.com instead.')
-          return
-        }
-
-        setLoading(true)
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          const dataUrl = reader.result
-          setImagePreview(dataUrl)
-          setForm(f => ({ ...f, imageUrl: dataUrl }))
-          alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
-          setLoading(false)
-        }
-        reader.onerror = () => {
-          alert('❌ Failed to read file')
-          setLoading(false)
-        }
-        reader.readAsDataURL(file)
+    if (proceed) {
+      // Open imgur AFTER user clicks OK (avoids popup blocker)
+      window.open('https://imgur.com/upload', '_blank', 'noopener,noreferrer')
+      
+      // Switch to URL input method
+      setUploadMethod('url')
+      
+      // Focus on the URL input after a short delay
+      setTimeout(() => {
+        const urlInput = document.querySelector('input[type="text"][placeholder*="Image URL"]')
+        if (urlInput) urlInput.focus()
+      }, 300)
+      
+      // Show a follow-up message
+      setTimeout(() => {
+        alert('✅ Imgur opened! Upload your image there, then copy and paste the image URL here.')
+      }, 500)
+    } else {
+      // Try data URL for small images
+      if (file.size > 50 * 1024) {
+        alert('❌ File too large for data URL (>50KB). Please use imgur.com instead.')
+        return
       }
-    }, 500)
+
+      setLoading(true)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const dataUrl = reader.result
+        setImagePreview(dataUrl)
+        setForm(f => ({ ...f, imageUrl: dataUrl }))
+        alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
+        setLoading(false)
+      }
+      reader.onerror = () => {
+        alert('❌ Failed to read file')
+        setLoading(false)
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   const handleImageUrlChange = (url) => {
