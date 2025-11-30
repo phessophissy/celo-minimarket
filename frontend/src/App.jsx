@@ -103,64 +103,56 @@ export default function App() {
       return
     }
 
-    // Check file size (max 5MB for imgBB free tier)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('❌ Image too large. Please use an image under 5MB.')
-      return
+    // Check file size (recommend under 200KB for on-chain storage)
+    if (file.size > 200 * 1024) {
+      const useAnyway = confirm(
+        '⚠️ Image is larger than 200KB.\n\n' +
+        'Large images will cost more gas fees.\n\n' +
+        'Recommendations:\n' +
+        '• Use "Paste Image URL" option instead\n' +
+        '• Upload to imgur.com, postimages.org, or imgbb.com\n' +
+        '• Then paste the image URL\n\n' +
+        'Click OK to proceed anyway\n' +
+        'Click Cancel to switch to URL input'
+      )
+      
+      if (!useAnyway) {
+        setUploadMethod('url')
+        return
+      }
     }
 
     setLoading(true)
     
     try {
-      // Convert to base64
+      // Convert to base64 data URL
       const reader = new FileReader()
       
-      reader.onloadend = async () => {
-        try {
-          const base64String = reader.result.split(',')[1]
-          
-          // Upload to imgBB (free image hosting)
-          const formData = new FormData()
-          formData.append('image', base64String)
-          
-          const response = await fetch('https://api.imgbb.com/1/upload?key=c62d9e2a61b8c8f0e1e64e8c89c1cf93', {
-            method: 'POST',
-            body: formData
-          })
-          
-          if (!response.ok) {
-            throw new Error('Upload failed')
-          }
-          
-          const data = await response.json()
-          
-          if (data.success && data.data.url) {
-            const imageUrl = data.data.url
-            setImagePreview(imageUrl)
-            setForm(f => ({ ...f, imageUrl }))
-            alert('✅ Image uploaded successfully!')
-          } else {
-            throw new Error('Upload failed')
-          }
-        } catch (error) {
-          console.error('Upload error:', error)
-          alert('❌ Failed to upload image. Please try entering a URL manually instead.')
-          setUploadMethod('url')
-        } finally {
-          setLoading(false)
+      reader.onloadend = () => {
+        const dataUrl = reader.result
+        setImagePreview(dataUrl)
+        setForm(f => ({ ...f, imageUrl: dataUrl }))
+        
+        if (file.size > 200 * 1024) {
+          alert('✅ Image loaded! Note: Large images will increase gas costs when adding product.')
+        } else {
+          alert('✅ Image loaded successfully!')
         }
+        setLoading(false)
       }
       
       reader.onerror = () => {
-        alert('❌ Failed to read file')
+        alert('❌ Failed to read file. Please try again or use URL input.')
         setLoading(false)
+        setUploadMethod('url')
       }
       
       reader.readAsDataURL(file)
     } catch (error) {
       console.error('Error:', error)
-      alert('❌ Failed to process image')
+      alert('❌ Failed to process image. Please try using URL input instead.')
       setLoading(false)
+      setUploadMethod('url')
     }
   }
 
@@ -294,8 +286,8 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">Paste Image URL</option>
-                <option value="file">Upload Image (Auto)</option>
+                <option value="url">🔗 Paste Image URL (Recommended)</option>
+                <option value="file">📁 Upload File (Embed Direct)</option>
               </select>
             </label>
 
@@ -308,7 +300,7 @@ export default function App() {
                   onChange={e => handleImageUrlChange(e.target.value)}
                 />
                 <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem'}}>
-                  💡 Or use "Upload Image (Auto)" option above for automatic hosting
+                  💡 Recommended: Upload to <a href="https://postimages.org" target="_blank" style={{color: '#4caf50'}}>PostImages</a>, <a href="https://imgur.com" target="_blank" style={{color: '#4caf50'}}>Imgur</a>, or <a href="https://imgbb.com" target="_blank" style={{color: '#4caf50'}}>ImgBB</a> (free), then paste URL here
                 </p>
               </div>
             ) : (
@@ -325,7 +317,7 @@ export default function App() {
                   disabled={loading}
                 />
                 <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem', textAlign: 'center'}}>
-                  📤 Images are automatically uploaded to free hosting (max 5MB)
+                  📦 Image will be embedded directly (works offline, but costs more gas). Keep under 200KB for best results.
                 </p>
               </div>
             )}
