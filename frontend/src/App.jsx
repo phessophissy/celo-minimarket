@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useContractKit } from '@celo-tools/use-contractkit'
+import { useAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
+import { BrowserProvider } from 'ethers'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import marketArtifact from './abi/CeloMiniMarket.json'
@@ -10,7 +11,6 @@ const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
 const marketAbi = marketArtifact.abi // Extract ABI from Hardhat artifact
 
 
-
 const CELO_RPC_URL = 'https://rpc.ankr.com/celo'
 const erc20Abi = [
   "function decimals() view returns (uint8)",
@@ -18,141 +18,53 @@ const erc20Abi = [
 ]
 
 export default function App() {
-  const { address, kit, connect, destroy } = useContractKit()
+  // Reown AppKit hooks
+  const { open } = useAppKit()
+  const { address, isConnected } = useAppKitAccount()
+  const { walletProvider } = useAppKitProvider('eip155')
+  
   const [products, setProducts] = useState([])
   const [form, setForm] = useState({ name: '', price: '', description: '', imageUrl: '' })
   const [decimals, setDecimals] = useState(18)
   const [loading, setLoading] = useState(false)
-  const [providerError, setProviderError] = useState(null)
-  const [connectedAccount, setConnectedAccount] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [uploadMethod, setUploadMethod] = useState('url') // 'url' or 'file'
 
-  // Wait for wallet to properly connect and get account
-  useEffect(() => {
-    const getAccount = async () => {
-      if (!kit?.connection?.web3?.currentProvider) {
-        setConnectedAccount(null)
-        return
-      }
-
-      try {
-        const provider = kit.connection.web3.currentProvider
-        
-        // Try multiple methods to get the account
-        let account = null
-        
-        // Method 1: Use address from ContractKit
-        if (address && ethers.utils.isAddress(address)) {
-          account = address
-        }
-        // Method 2: Check provider.selectedAddress
-        else if (provider.selectedAddress && ethers.utils.isAddress(provider.selectedAddress)) {
-          account = provider.selectedAddress
-        }
-        // Method 3: Request accounts from provider
-        else if (provider.request) {
-          try {
-            const accounts = await provider.request({ method: 'eth_accounts' })
-            if (accounts && accounts.length > 0 && ethers.utils.isAddress(accounts[0])) {
-              account = accounts[0]
-            }
-          } catch (err) {
-            console.warn('Could not get accounts:', err)
-          }
-        }
-        // Method 4: Legacy web3 accounts
-        else if (window.ethereum) {
-          try {
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-            if (accounts && accounts.length > 0 && ethers.utils.isAddress(accounts[0])) {
-              account = accounts[0]
-            }
-          } catch (err) {
-            console.warn('Could not get accounts from window.ethereum:', err)
-          }
-        }
-
-        setConnectedAccount(account)
-      } catch (error) {
-        console.error('Error getting account:', error)
-        setConnectedAccount(null)
-      }
-    }
-
-    getAccount()
-  }, [address, kit?.connection?.web3?.currentProvider])
-
+  // Create provider from walletProvider or fallback to public RPC
   const provider = useMemo(() => {
-    if (!kit?.connection?.web3?.currentProvider) return null
-    
-    try {
-      const celoProvider = kit.connection.web3.currentProvider
-      
-      // Comprehensive fix for supportsSubscriptions error
-      if (celoProvider) {
-        if (typeof celoProvider.supportsSubscriptions !== 'function') {
-          celoProvider.supportsSubscriptions = () => false
-        }
-        if (typeof celoProvider.on !== 'function') {
-          celoProvider.on = () => {}
-        }
-        if (typeof celoProvider.removeListener !== 'function') {
-          celoProvider.removeListener = () => {}
-        }
-        if (typeof celoProvider.removeAllListeners !== 'function') {
-          celoProvider.removeAllListeners = () => {}
-        }
+    if (walletProvider) {
+      try {
+        return new ethers.providers.Web3Provider(walletProvider)
+      } catch (error) {
+        console.error('Error creating wallet provider:', error)
       }
-
-      const web3Provider = new ethers.providers.Web3Provider(celoProvider, 'any')
-      setProviderError(null)
-      return web3Provider
-    } catch (error) {
-      console.error('Provider initialization error:', error)
-      setProviderError(error.message)
-      return null
     }
-  }, [kit?.connection?.web3?.currentProvider])
+    // Fallback to public RPC for read-only operations
+    return new ethers.providers.JsonRpcProvider(CELO_RPC_URL)
+  }, [walletProvider])
 
-    const getSigner = async () => {
-    // Force use of wallet provider directly, bypass any RPC
-    if (!window.ethereum) {
-      console.error("No wallet detected")
-      return null
-    }
-    
-    if (!connectedAccount || !ethers.utils.isAddress(connectedAccount)) {
-      console.warn('No valid connected account:', connectedAccount)
-      return null
-    }
-
-    try {
-      // Create fresh provider directly from wallet, NOT from ContractKit
-      const walletProvider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-      const signer = await walletProvider.getSigner()
-      console.log('Using wallet signer:', await signer.getAddress())
-      return signer
-    } catch (error) {
-      console.error('Error getting signer:', error)
-      return null
-    }
-  }
-
-    const market = async () => {
-    const signer = await getSigner()
-    if (!signer) {
-      // For write operations, we MUST have a signer
+  // Get signer for write operations
+  const getSigner = async () => {
+    if (!walletProvider || !isConnected) {
       throw new Error("Please connect your wallet to perform this action")
     }
+    try {
+      const ethersProvider = new ethers.providers.Web3Provider(walletProvider)
+      return ethersProvider.getSigner()
+    } catch (error) {
+      console.error('Error getting signer:', error)
+      throw error
+    }
+  }
+
+  const market = async () => {
+    const signer = await getSigner()
     return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer)
   }
+
   const cusd = async () => {
     const signer = await getSigner()
-    if (!signer && !provider) {
-      throw new Error('No provider or signer available')
-    }
-    return new ethers.Contract(CUSD_ADDRESS, erc20Abi, signer ?? provider)
+    return new ethers.Contract(CUSD_ADDRESS, erc20Abi, signer)
   }
 
   const loadProducts = async () => {
@@ -177,9 +89,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (!provider) return;
+    if (!provider) return
     loadProducts()
-    }, [provider])
+  }, [provider])
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
@@ -191,59 +103,56 @@ export default function App() {
       return
     }
 
-    setLoading(true)
+    // Open imgur immediately (before any async operations to avoid popup blocker)
+    const imgurWindow = window.open('https://imgur.com/upload', '_blank')
 
-    try {
-      // Show recommendation for external hosting
-      const useExternal = confirm(
-        '📸 Image Upload Options:\n\n' +
-        '✅ RECOMMENDED: Upload to free service first\n' +
-        '   • Go to imgur.com (no account needed)\n' +
-        '   • Upload your image\n' +
-        '   • Copy the image URL\n' +
-        '   • Paste it in the "Image URL" field\n\n' +
-        '⚠️ ALTERNATIVE: Use data URL (not recommended)\n' +
-        '   • Works for very small images only\n' +
-        '   • May cause high gas fees\n' +
-        '   • May fail for images > 50KB\n\n' +
-        'Click OK to open imgur.com\n' +
-        'Click Cancel to try data URL anyway'
+    // Show instructions
+    setTimeout(() => {
+      const proceed = confirm(
+        '📸 Imgur opened in a new tab!\n\n' +
+        'Follow these steps:\n' +
+        '1. Upload your image on imgur.com\n' +
+        '2. Right-click the uploaded image\n' +
+        '3. Select "Copy image address"\n' +
+        '4. Come back here and paste it in the "Image URL" field\n\n' +
+        'Click OK to switch to Image URL field\n' +
+        'Click Cancel to use data URL instead (not recommended)'
       )
 
-      if (useExternal) {
-        // Open imgur in new tab
-        window.open('https://imgur.com/upload', '_blank')
+      if (proceed) {
+        // Switch to URL input method
         setUploadMethod('url')
-        setLoading(false)
-        return
-      }
+        // Focus on the URL input after a short delay
+        setTimeout(() => {
+          const urlInput = document.querySelector('input[type="text"][placeholder*="Image URL"]')
+          if (urlInput) urlInput.focus()
+        }, 100)
+      } else {
+        // Close imgur window if they chose Cancel
+        if (imgurWindow) imgurWindow.close()
+        
+        // Try data URL for small images
+        if (file.size > 50 * 1024) {
+          alert('❌ File too large for data URL (>50KB). Please use imgur.com instead.')
+          return
+        }
 
-      // Fallback: Use data URL for small images
-      if (file.size > 50 * 1024) {
-        alert('❌ File too large for data URL (>50KB). Please use imgur.com or another image hosting service.')
-        setLoading(false)
-        return
+        setLoading(true)
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const dataUrl = reader.result
+          setImagePreview(dataUrl)
+          setForm(f => ({ ...f, imageUrl: dataUrl }))
+          alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
+          setLoading(false)
+        }
+        reader.onerror = () => {
+          alert('❌ Failed to read file')
+          setLoading(false)
+        }
+        reader.readAsDataURL(file)
       }
-
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const dataUrl = reader.result
-        setImagePreview(dataUrl)
-        setForm(f => ({ ...f, imageUrl: dataUrl }))
-        alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
-        setLoading(false)
-      }
-      reader.onerror = () => {
-        alert('❌ Failed to read file')
-        setLoading(false)
-      }
-      reader.readAsDataURL(file)
-      
-    } catch (error) {
-      console.error('Image upload error:', error)
-      alert('❌ Failed to process image. Please use an image URL instead.')
-      setLoading(false)
-    }
+    }, 500)
   }
 
   const handleImageUrlChange = (url) => {
@@ -258,7 +167,7 @@ export default function App() {
 
   const addProduct = async (e) => {
     e.preventDefault()
-    if (!connectedAccount) {
+    if (!isConnected) {
       alert('❌ Please connect your wallet first!')
       return
     }
@@ -290,7 +199,7 @@ export default function App() {
   }
 
   const buyNow = async (tokenId, priceWei) => {
-    if (!connectedAccount) {
+    if (!isConnected) {
       alert('❌ Please connect your wallet first!')
       return
     }
@@ -330,20 +239,12 @@ export default function App() {
             <p className="tagline">Your Mobile Peer-to-Peer Marketplace</p>
           </div>
         </div>
-        {connectedAccount
-          ? <button className="btn btn-disconnect" onClick={destroy}>
-              🔌 Disconnect ({connectedAccount.slice(0,6)}…)
-            </button>
-          : <button className="btn btn-connect" onClick={connect}>
-              🔗 Connect Wallet
-            </button>}
+        <button className="btn btn-connect" onClick={() => open()}>
+          {isConnected 
+            ? `🔌 ${address?.slice(0, 6)}...${address?.slice(-4)}`
+            : '🔗 Connect Wallet'}
+        </button>
       </div>
-
-      {providerError && (
-        <div className="error-box">
-          ⚠️ Provider Error: {providerError}. Try disabling conflicting wallet extensions or refreshing the page.
-        </div>
-      )}
 
       <div className="description-card">
         <h2>📱 About This Platform</h2>
@@ -439,7 +340,7 @@ export default function App() {
             onChange={e=>setForm(f=>({...f,description:e.target.value}))} 
             required
           />
-          <button disabled={!connectedAccount || loading} type="submit" className="btn btn-primary">
+          <button disabled={!isConnected || loading} type="submit" className="btn btn-primary">
             {loading ? '⏳ Adding…' : '✨ Add Product'}
           </button>
         </form>
@@ -465,7 +366,7 @@ export default function App() {
               <p className="product-price">💰 {ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</p>
               <p className="product-vendor">👤 Vendor: {p.vendor.slice(0,8)}...{p.vendor.slice(-6)}</p>
               <button 
-                disabled={loading || !connectedAccount} 
+                disabled={loading || !isConnected} 
                 onClick={() => buyNow(p.tokenId, p.priceWei)}
                 className="btn btn-secondary"
               >

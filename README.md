@@ -2,6 +2,8 @@
 
 Ultra-minimal, on-chain marketplace on Celo Mainnet with full storage.
 
+> **🎉 Now powered by Reown AppKit!** Modern wallet connection supporting 100+ wallets including MetaMask, Valora, WalletConnect, and more. [See integration guide](./REOWN_APPKIT_INTEGRATION.md)
+
 ## 📁 Project Structure
 
 ```
@@ -54,8 +56,15 @@ Also copy the ABI from `artifacts/contracts/CeloMiniMarket.sol/CeloMiniMarket.js
 
 ```bash
 cd frontend
+npm install  # Install dependencies (including Reown AppKit)
 npm run dev
 ```
+
+**First time setup:** Create `frontend/.env` file with your Reown project ID:
+```env
+VITE_REOWN_PROJECT_ID=your_project_id_here
+```
+Get a free project ID at [cloud.reown.com](https://cloud.reown.com)
 
 Visit `http://localhost:5173`
 
@@ -93,10 +102,12 @@ PRIVATE_KEY=0xYOUR_PRIVATE_KEY
 
 ## 🌐 Frontend Features
 
-- Connect Celo wallet (MetaMask, Valora, etc.)
+- **Modern Wallet Connection:** Reown AppKit with support for 100+ wallets
+- Connect Celo wallet (MetaMask, Valora, WalletConnect, and more)
 - Add products to marketplace
 - Browse active products
 - Buy products with cUSD (direct transfer to vendor)
+- Mobile-responsive design
 
 ## ✅ Pre-Launch Checklist
 
@@ -119,6 +130,8 @@ PRIVATE_KEY=0xYOUR_PRIVATE_KEY
 
 ## 📚 Resources
 
+- [Reown AppKit Integration Guide](./REOWN_APPKIT_INTEGRATION.md)
+- [Reown Cloud (Get Project ID)](https://cloud.reown.com)
 - [Celo Docs](https://docs.celo.org)
 - [Hardhat](https://hardhat.org)
 - [Celoscan](https://celoscan.io)
