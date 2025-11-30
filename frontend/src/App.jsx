@@ -103,57 +103,64 @@ export default function App() {
       return
     }
 
-    // Show instructions first with confirmation
-    const proceed = confirm(
-      '📸 Imgur Upload Assistant\n\n' +
-      'Follow these steps:\n' +
-      '1. Click OK to open imgur.com in a new tab\n' +
-      '2. Upload your image on imgur.com\n' +
-      '3. Right-click the uploaded image\n' +
-      '4. Select "Copy image address"\n' +
-      '5. Come back here and paste it in the "Image URL" field\n\n' +
-      'Click OK to open Imgur now\n' +
-      'Click Cancel to use data URL instead (not recommended)'
-    )
+    // Check file size (max 5MB for imgBB free tier)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('❌ Image too large. Please use an image under 5MB.')
+      return
+    }
 
-    if (proceed) {
-      // Open imgur AFTER user clicks OK (avoids popup blocker)
-      window.open('https://imgur.com/upload', '_blank', 'noopener,noreferrer')
-      
-      // Switch to URL input method
-      setUploadMethod('url')
-      
-      // Focus on the URL input after a short delay
-      setTimeout(() => {
-        const urlInput = document.querySelector('input[type="text"][placeholder*="Image URL"]')
-        if (urlInput) urlInput.focus()
-      }, 300)
-      
-      // Show a follow-up message
-      setTimeout(() => {
-        alert('✅ Imgur opened! Upload your image there, then copy and paste the image URL here.')
-      }, 500)
-    } else {
-      // Try data URL for small images
-      if (file.size > 50 * 1024) {
-        alert('❌ File too large for data URL (>50KB). Please use imgur.com instead.')
-        return
-      }
-
-      setLoading(true)
+    setLoading(true)
+    
+    try {
+      // Convert to base64
       const reader = new FileReader()
-      reader.onloadend = () => {
-        const dataUrl = reader.result
-        setImagePreview(dataUrl)
-        setForm(f => ({ ...f, imageUrl: dataUrl }))
-        alert('⚠️ Using data URL. This may cause high gas fees. Consider using an external URL instead.')
-        setLoading(false)
+      
+      reader.onloadend = async () => {
+        try {
+          const base64String = reader.result.split(',')[1]
+          
+          // Upload to imgBB (free image hosting)
+          const formData = new FormData()
+          formData.append('image', base64String)
+          
+          const response = await fetch('https://api.imgbb.com/1/upload?key=c62d9e2a61b8c8f0e1e64e8c89c1cf93', {
+            method: 'POST',
+            body: formData
+          })
+          
+          if (!response.ok) {
+            throw new Error('Upload failed')
+          }
+          
+          const data = await response.json()
+          
+          if (data.success && data.data.url) {
+            const imageUrl = data.data.url
+            setImagePreview(imageUrl)
+            setForm(f => ({ ...f, imageUrl }))
+            alert('✅ Image uploaded successfully!')
+          } else {
+            throw new Error('Upload failed')
+          }
+        } catch (error) {
+          console.error('Upload error:', error)
+          alert('❌ Failed to upload image. Please try entering a URL manually instead.')
+          setUploadMethod('url')
+        } finally {
+          setLoading(false)
+        }
       }
+      
       reader.onerror = () => {
         alert('❌ Failed to read file')
         setLoading(false)
       }
+      
       reader.readAsDataURL(file)
+    } catch (error) {
+      console.error('Error:', error)
+      alert('❌ Failed to process image')
+      setLoading(false)
     }
   }
 
@@ -287,8 +294,8 @@ export default function App() {
                 }}
                 className="upload-method-select"
               >
-                <option value="url">Image URL (Recommended)</option>
-                <option value="file">Upload Helper</option>
+                <option value="url">Paste Image URL</option>
+                <option value="file">Upload Image (Auto)</option>
               </select>
             </label>
 
@@ -300,14 +307,14 @@ export default function App() {
                   value={form.imageUrl}
                   onChange={e => handleImageUrlChange(e.target.value)}
                 />
-                <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem'}}>
-                  💡 Or upload directly from your device using "Upload File (IPFS)" option above
+                <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem'}}>
+                  💡 Or use "Upload Image (Auto)" option above for automatic hosting
                 </p>
               </div>
             ) : (
               <div className="file-upload-container">
                 <label htmlFor="image-upload" className="file-upload-label">
-                  🚀 Upload Assistant - Click to Get Help
+                  {loading ? '⏳ Uploading...' : '📁 Choose Image to Upload'}
                 </label>
                 <input
                   id="image-upload"
@@ -315,9 +322,10 @@ export default function App() {
                   accept="image/*"
                   onChange={handleImageUpload}
                   className="file-upload-input"
+                  disabled={loading}
                 />
-                <p style={{fontSize: '0.85rem', color: '#a5d6a7', marginTop: '0.5rem', textAlign: 'center'}}>
-                  💡 This will guide you to upload to imgur.com (free, no account needed) and copy the URL
+                <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem', textAlign: 'center'}}>
+                  📤 Images are automatically uploaded to free hosting (max 5MB)
                 </p>
               </div>
             )}

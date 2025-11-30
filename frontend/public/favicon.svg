@@ -1,9 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#f8f8f8"/>
-  <g transform="translate(6, 6) scale(0.15)">
-    <path d="M 80 0 Q 100 -15, 120 0" fill="none" stroke="#7fa87f" stroke-width="12" stroke-linecap="round"/>
-    <line x1="70" y1="5" x2="130" y2="5" stroke="#7fa87f" stroke-width="10"/>
-    <path d="M 100 20 A 25 25 0 0 0 75 45 A 25 25 0 0 0 100 70" fill="none" stroke="#8fc9c9" stroke-width="10"/>
-    <ellipse cx="90" cy="42" rx="3" ry="5" fill="#8fc9c9"/>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle border -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#4a5568" stroke-width="2"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#4a5568" stroke-width="1"/>
+  
+  <!-- Shopping cart with leaves -->
+  <g transform="translate(100, 80)">
+    <!-- Cart handle -->
+    <path d="M -25 -20 Q -20 -30 -5 -30 L 25 -30" fill="none" stroke="#7fb185" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- Cart body parts -->
+    <path d="M -30 0 L -25 -15 L 20 -15 L 22 0 Z" fill="#9bc4c4" opacity="0.6"/>
+    <path d="M 22 0 L 27 5 L -25 5 L -30 0 Z" fill="#c4a77f" opacity="0.6"/>
+    
+    <!-- Leaves inside cart -->
+    <g transform="translate(0, -8)">
+      <!-- Left leaf -->
+      <ellipse cx="-8" cy="0" rx="6" ry="8" fill="#7fb185" opacity="0.8" transform="rotate(-20 -8 0)"/>
+      <!-- Right leaf -->
+      <ellipse cx="5" cy="0" rx="5" ry="7" fill="#81c784" opacity="0.8" transform="rotate(15 5 0)"/>
+      <!-- Leaf veins -->
+      <line x1="-8" y1="-5" x2="-8" y2="5" stroke="#4caf50" stroke-width="1"/>
+      <line x1="5" y1="-4" x2="5" y2="4" stroke="#66bb6a" stroke-width="1"/>
+    </g>
   </g>
+  
+  <!-- Text: Celo -->
+  <text x="100" y="145" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#4a5568" text-anchor="middle">Celo</text>
+  
+  <!-- Text: MiniMarket -->
+  <text x="100" y="165" font-family="Arial, sans-serif" font-size="16" fill="#718096" text-anchor="middle">MiniMarket</text>
 </svg>
