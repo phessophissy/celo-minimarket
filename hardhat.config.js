@@ -7,8 +7,7 @@ export default {
     settings: {
       evmVersion: 'paris',
       optimizer: {
-        enabled: false,
-        runs: 200
+        enabled: false
       }
     }
   },
@@ -24,7 +23,7 @@ export default {
   },
   etherscan: {
     apiKey: {
-      celo: 'CELOSCAN_API_KEY'
+      celo: process.env.CELOSCAN_API_KEY || 'abc' // Celoscan doesn't require API key for verification
     },
     customChains: [
       {

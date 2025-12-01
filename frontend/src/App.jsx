@@ -6,7 +6,7 @@ import axios from 'axios'
 import marketArtifact from './abi/CeloMiniMarket.json'
 import './App.css'
 
-const MARKET_ADDRESS = '0xABD9E2A3bc4bdf520C82CcBC287095a125C56225'
+const MARKET_ADDRESS = '0x53b1520E60468275714684bC881FbEb7E5Bd33DB'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
 const marketAbi = marketArtifact.abi // Extract ABI from Hardhat artifact
 
