@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
-import { BrowserProvider } from 'ethers'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import marketArtifact from './abi/CeloMiniMarket.json'
+import { getIsFarcasterMiniApp, getSafeAreaInsets, composeCast, getFarcasterUser, signalReady } from './config/farcaster'
 import './App.css'
 
 const MARKET_ADDRESS = '0x53b1520E60468275714684bC881FbEb7E5Bd33DB'
@@ -17,7 +17,7 @@ const erc20Abi = [
   "function transfer(address to, uint256 amount) returns (bool)"
 ]
 
-export default function App() {
+export default function App({ onReady }) {
   // Reown AppKit hooks
   const { open } = useAppKit()
   const { address, isConnected } = useAppKitAccount()
@@ -29,6 +29,12 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
   const [uploadMethod, setUploadMethod] = useState('url') // 'url' or 'file'
+  const [appReady, setAppReady] = useState(false)
+  
+  // Get Farcaster Mini App safe area insets for proper mobile UI
+  const safeAreaInsets = getSafeAreaInsets()
+  const isFarcasterMiniApp = getIsFarcasterMiniApp()
+  const farcasterUser = getFarcasterUser()
 
   // Create provider from walletProvider or fallback to public RPC
   const provider = useMemo(() => {
@@ -92,6 +98,26 @@ export default function App() {
     if (!provider) return
     loadProducts()
   }, [provider])
+
+  // Signal ready to Farcaster when app is loaded
+  useEffect(() => {
+    if (!appReady) {
+      setAppReady(true)
+      // Signal that the app is ready (hides Farcaster splash screen)
+      signalReady()
+    }
+  }, [appReady])
+
+  // Share product to Farcaster
+  const shareToFarcaster = async (product) => {
+    if (!isFarcasterMiniApp) return
+    
+    const text = `Check out "${product.name}" for ${ethers.utils.formatUnits(product.priceWei, decimals)} cUSD on Celo MiniMarket! 🛒`
+    const result = await composeCast(text, ['https://celo-minimarket.vercel.app'])
+    if (result?.cast) {
+      alert('✅ Shared to Farcaster!')
+    }
+  }
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
@@ -379,13 +405,23 @@ export default function App() {
               <div className="nft-badge">🎨 NFT #{Number(p.tokenId)}</div>
               <p className="product-price">💰 {ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</p>
               <p className="product-vendor">👤 Vendor: {p.vendor.slice(0,8)}...{p.vendor.slice(-6)}</p>
-              <button 
-                disabled={loading || !isConnected} 
-                onClick={() => buyNow(p.tokenId, p.priceWei)}
-                className="btn btn-secondary"
-              >
-                {loading ? '⏳ Processing…' : '🛍️ Buy Now & Burn NFT'}
-              </button>
+              <div className="product-actions">
+                <button 
+                  disabled={loading || !isConnected} 
+                  onClick={() => buyNow(p.tokenId, p.priceWei)}
+                  className="btn btn-secondary"
+                >
+                  {loading ? '⏳ Processing…' : '🛍️ Buy Now & Burn NFT'}
+                </button>
+                {isFarcasterMiniApp && (
+                  <button 
+                    onClick={() => shareToFarcaster(p)}
+                    className="btn btn-share"
+                  >
+                    📣 Share
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
