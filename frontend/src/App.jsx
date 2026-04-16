@@ -1,197 +1,119 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/react'
 import { ethers } from 'ethers'
-import axios from 'axios'
 import marketArtifact from './abi/CeloMiniMarket.json'
 import { getIsFarcasterMiniApp, getSafeAreaInsets, composeCast, getFarcasterUser, signalReady } from './config/farcaster'
-import './App.css'
+import {
+  Footer, StatsBar, SearchBar, ProductCard,
+  ToastContainer, toast, ThemeToggle, NetworkBadge,
+  EmptyState, QuickAmounts, CeloParticles,
+  ConfirmModal
+} from './components'
 
-const MARKET_ADDRESS = '0x53b1520E60468275714684bC881FbEb7E5Bd33DB'
+const MARKET_ADDRESS = '0x7a280e8b5995F72F20a1e90177C20D002aC1C3a4'
 const CUSD_ADDRESS   = '0x765DE816845861e75A25fCA122bb6898B8B1282a'
-const marketAbi = marketArtifact.abi // Extract ABI from Hardhat artifact
-
-
+const marketAbi = marketArtifact.abi
 const CELO_RPC_URL = 'https://rpc.ankr.com/celo'
-const erc20Abi = [
-  "function decimals() view returns (uint8)",
-  "function transfer(address to, uint256 amount) returns (bool)"
-]
 
 export default function App({ onReady }) {
-  // Reown AppKit hooks
   const { open } = useAppKit()
   const { address, isConnected } = useAppKitAccount()
   const { walletProvider } = useAppKitProvider('eip155')
-  
+
   const [products, setProducts] = useState([])
   const [form, setForm] = useState({ name: '', price: '', description: '', imageUrl: '' })
-  const [decimals, setDecimals] = useState(18)
+  const [decimals] = useState(18)
   const [loading, setLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
-  const [uploadMethod, setUploadMethod] = useState('url') // 'url' or 'file'
+  const [uploadMethod, setUploadMethod] = useState('url')
   const [appReady, setAppReady] = useState(false)
-  
-  // Get Farcaster Mini App safe area insets for proper mobile UI
-  const safeAreaInsets = getSafeAreaInsets()
-  const isFarcasterMiniApp = getIsFarcasterMiniApp()
-  const farcasterUser = getFarcasterUser()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [buyModal, setBuyModal] = useState(null)
 
-  // Create provider from walletProvider or fallback to public RPC
+  const isFarcasterMiniApp = getIsFarcasterMiniApp()
+
   const provider = useMemo(() => {
     if (walletProvider) {
-      try {
-        return new ethers.providers.Web3Provider(walletProvider)
-      } catch (error) {
-        console.error('Error creating wallet provider:', error)
-      }
+      try { return new ethers.providers.Web3Provider(walletProvider) }
+      catch (e) { console.error('Provider error:', e) }
     }
-    // Fallback to public RPC for read-only operations
     return new ethers.providers.JsonRpcProvider(CELO_RPC_URL)
   }, [walletProvider])
 
-  // Get signer for write operations
   const getSigner = async () => {
-    if (!walletProvider || !isConnected) {
-      throw new Error("Please connect your wallet to perform this action")
-    }
-    try {
-      const ethersProvider = new ethers.providers.Web3Provider(walletProvider)
-      return ethersProvider.getSigner()
-    } catch (error) {
-      console.error('Error getting signer:', error)
-      throw error
-    }
+    if (!walletProvider || !isConnected) throw new Error('Connect wallet first')
+    return new ethers.providers.Web3Provider(walletProvider).getSigner()
   }
 
-  const market = async () => {
-    const signer = await getSigner()
-    return new ethers.Contract(MARKET_ADDRESS, marketAbi, signer)
-  }
+  const market = async () => new ethers.Contract(MARKET_ADDRESS, marketAbi, await getSigner())
 
-  const cusd = async () => {
-    const signer = await getSigner()
-    return new ethers.Contract(CUSD_ADDRESS, erc20Abi, signer)
-  }
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     if (!provider) return
     try {
-      // Use provider for read-only operations
       const m = new ethers.Contract(MARKET_ADDRESS, marketAbi, provider)
       const list = await m.getActiveProducts()
-      console.log("Raw getActiveProducts response:", list, "Type:", typeof list, "IsArray:", Array.isArray(list))
-      
-      // Ensure list is an array
-      if (Array.isArray(list)) {
-        setProducts(list)
-      } else {
-        console.warn('getActiveProducts did not return an array:', list)
-        setProducts([])
-      }
-    } catch (error) {
-      console.error('Error loading products:', error)
-      setProducts([]) // Set empty array on error
+      setProducts(Array.isArray(list) ? list : [])
+    } catch (err) {
+      console.error('Load error:', err)
+      setProducts([])
     }
-  }
-
-  useEffect(() => {
-    if (!provider) return
-    loadProducts()
   }, [provider])
 
-  // Signal ready to Farcaster when app is loaded
+  useEffect(() => { loadProducts() }, [loadProducts])
+
   useEffect(() => {
-    if (!appReady) {
-      setAppReady(true)
-      // Signal that the app is ready (hides Farcaster splash screen)
-      signalReady()
-    }
+    if (!appReady) { setAppReady(true); signalReady() }
   }, [appReady])
 
-  // Share product to Farcaster
+  const filteredProducts = useMemo(() => {
+    let result = [...products]
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+      )
+    }
+    switch (sortBy) {
+      case 'price-low':
+        result.sort((a, b) => a.priceWei.sub(b.priceWei).toNumber()); break
+      case 'price-high':
+        result.sort((a, b) => b.priceWei.sub(a.priceWei).toNumber()); break
+      case 'name':
+        result.sort((a, b) => a.name.localeCompare(b.name)); break
+      default: break
+    }
+    return result
+  }, [products, searchQuery, sortBy])
+
   const shareToFarcaster = async (product) => {
     if (!isFarcasterMiniApp) return
-    
     const text = `Check out "${product.name}" for ${ethers.utils.formatUnits(product.priceWei, decimals)} cUSD on Celo MiniMarket! 🛒`
     const result = await composeCast(text, ['https://celo-minimarket.vercel.app'])
-    if (result?.cast) {
-      alert('✅ Shared to Farcaster!')
-    }
+    if (result?.cast) toast('Shared to Farcaster!', 'success')
   }
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('❌ Please upload an image file')
-      return
-    }
-
-    // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('❌ Image too large. Please use an image under 10MB.')
-      return
-    }
-
+    if (!file.type.startsWith('image/')) { toast('Please upload an image file', 'error'); return }
+    if (file.size > 10 * 1024 * 1024) { toast('Image too large (max 10MB)', 'error'); return }
     setLoading(true)
-    
     try {
-      // Upload to Cloudinary (free tier, no API key required for unsigned uploads)
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('upload_preset', 'ml_default') // Cloudinary's demo preset
-      
-      const response = await fetch('https://api.cloudinary.com/v1_1/demo/image/upload', {
-        method: 'POST',
-        body: formData
-      })
-      
-      if (!response.ok) {
-        throw new Error('Upload failed')
-      }
-      
-      const data = await response.json()
-      
+      formData.append('upload_preset', 'ml_default')
+      const res = await fetch('https://api.cloudinary.com/v1_1/demo/image/upload', { method: 'POST', body: formData })
+      const data = await res.json()
       if (data.secure_url) {
-        const imageUrl = data.secure_url
-        setImagePreview(imageUrl)
-        setForm(f => ({ ...f, imageUrl }))
-        alert('✅ Image uploaded successfully to cloud hosting!')
-        setLoading(false)
-      } else {
-        throw new Error('No URL returned')
-      }
-    } catch (error) {
-      console.error('Upload error:', error)
-      
-      // Fallback: Try alternative method with File.io (temporary hosting)
-      try {
-        const formData2 = new FormData()
-        formData2.append('file', file)
-        
-        const response2 = await fetch('https://file.io', {
-          method: 'POST',
-          body: formData2
-        })
-        
-        const data2 = await response2.json()
-        
-        if (data2.success && data2.link) {
-          alert('⚠️ Image uploaded to temporary hosting. For permanent storage, please use:\n\n• https://postimages.org\n• https://imgbb.com\n• https://imgur.com\n\nThen paste the URL in "Paste Image URL" option.')
-          setUploadMethod('url')
-          setLoading(false)
-          return
-        }
-      } catch (fallbackError) {
-        console.error('Fallback upload error:', fallbackError)
-      }
-      
-      alert('❌ Upload failed. Please use these free image hosting services:\n\n1. Go to https://postimages.org (easiest, no signup)\n2. Upload your image\n3. Copy the "Direct Link"\n4. Switch to "Paste Image URL" and paste it there\n\nAlternatives: imgur.com or imgbb.com')
+        setImagePreview(data.secure_url)
+        setForm(f => ({ ...f, imageUrl: data.secure_url }))
+        toast('Image uploaded!', 'success')
+      } else throw new Error('Upload failed')
+    } catch (err) {
+      toast('Upload failed — try pasting a URL instead', 'warning')
       setUploadMethod('url')
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
   const handleImageUrlChange = (url) => {
@@ -206,245 +128,156 @@ export default function App({ onReady }) {
 
   const addProduct = async (e) => {
     e.preventDefault()
-    if (!isConnected) {
-      alert('❌ Please connect your wallet first!')
-      return
-    }
-    
-    if (!form.imageUrl) {
-      alert('❌ Please upload a product image')
-      return
-    }
-    
+    if (!isConnected) { toast('Connect your wallet first!', 'warning'); return }
+    if (!form.imageUrl) { toast('Please add a product image', 'warning'); return }
     const priceWei = ethers.utils.parseUnits(form.price || '0', decimals)
     setLoading(true)
     try {
       const m = await market()
-      // Now passes imageUrl as separate parameter for on-chain NFT storage
       const tx = await m.addProduct(form.name, priceWei, form.description, form.imageUrl)
-      console.log('Transaction sent:', tx.hash)
+      toast('Transaction sent — confirming...', 'info')
       await tx.wait()
-      console.log('Transaction confirmed! NFT minted!')
-      alert('✅ Product added successfully as NFT! 🎉')
+      toast('Product listed as NFT! 🎉', 'success')
       setForm({ name: '', price: '', description: '', imageUrl: '' })
       setImagePreview(null)
       await loadProducts()
-    } catch (error) {
-      console.error('Error adding product:', error)
-      alert('❌ Failed to add product: ' + (error.message || error))
-    } finally { 
-      setLoading(false) 
-    }
+    } catch (err) {
+      toast('Failed to add product: ' + (err.reason || err.message), 'error')
+    } finally { setLoading(false) }
   }
 
-  const buyNow = async (tokenId, priceWei) => {
-    if (!isConnected) {
-      alert('❌ Please connect your wallet first!')
-      return
-    }
+  const confirmBuy = (tokenId, priceWei) => {
+    if (!isConnected) { toast('Connect your wallet first!', 'warning'); return }
+    const product = products.find(p => Number(p.tokenId) === Number(tokenId))
+    setBuyModal({ tokenId, priceWei, product })
+  }
+
+  const executeBuy = async () => {
+    if (!buyModal) return
     setLoading(true)
     try {
       const m = await market()
-      // Purchase product and burn NFT
-      const tx = await m.purchaseProduct(tokenId, { value: priceWei })
-      console.log('Purchase transaction sent:', tx.hash)
+      const tx = await m.purchaseProduct(buyModal.tokenId, { value: buyModal.priceWei })
+      toast('Purchase sent — confirming...', 'info')
       await tx.wait()
-      console.log('Purchase confirmed! NFT burned!')
-      alert('✅ Purchase successful! Product NFT has been burned. 🔥')
+      toast('Purchase complete! NFT burned 🔥', 'success')
+      setBuyModal(null)
       await loadProducts()
-    } catch (error) {
-      console.error('Error purchasing product:', error)
-      alert('❌ Failed to purchase: ' + (error.message || error))
-    } finally { 
-      setLoading(false) 
-    }
+    } catch (err) {
+      toast('Purchase failed: ' + (err.reason || err.message), 'error')
+    } finally { setLoading(false) }
   }
 
   return (
-    <div className="app-container">
-      {/* Floating Balloons */}
-      <div className="balloon"></div>
-      <div className="balloon"></div>
-      <div className="balloon"></div>
-      <div className="balloon"></div>
-      <div className="balloon"></div>
-      <div className="balloon"></div>
-      
-      <div className="header">
-        <div className="header-content">
-          <img src="/logo.svg" alt="Celo MiniMarket Logo" className="header-logo" />
-          <div>
+    <>
+      <CeloParticles />
+      <ToastContainer />
+
+      <ConfirmModal
+        isOpen={!!buyModal}
+        title="Confirm Purchase"
+        message={buyModal ? `Buy "${buyModal.product?.name}" for ${ethers.utils.formatUnits(buyModal.priceWei, decimals)} cUSD?` : ''}
+        onConfirm={executeBuy}
+        onCancel={() => setBuyModal(null)}
+        loading={loading}
+      />
+
+      <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="header">
+          <div className="header-content">
+            <img src="/logo.svg" alt="Celo MiniMarket" className="header-logo" />
             <h1>Celo MiniMarket</h1>
-            <p className="tagline">Your Mobile Peer-to-Peer Marketplace</p>
+          </div>
+          <div className="header-nav">
+            <NetworkBadge isConnected={isConnected} />
+            <ThemeToggle />
+            <button className="btn btn-connect" onClick={() => open()}>
+              {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'Connect Wallet'}
+            </button>
           </div>
         </div>
-        <button className="btn btn-connect" onClick={() => open()}>
-          {isConnected 
-            ? `🔌 ${address?.slice(0, 6)}...${address?.slice(-4)}`
-            : '🔗 Connect Wallet'}
-        </button>
-      </div>
 
-      <div className="description-card">
-        <h2>📱 About This Platform</h2>
-        <p className="description-text">
-          Celo MiniMarket is a lightweight peer-to-peer mobile marketplace that enables small local vendors 
-          to list products and receive payments in Celo stable tokens (like cUSD), without needing a bank account. 
-          Buyers can browse nearby products, place orders, and pay instantly on-chain with low fees.
-        </p>
-      </div>
+        <div className="description-card animate-fadeInUp">
+          <h2>Peer-to-Peer Commerce on Celo</h2>
+          <p className="description-text">
+            List products, receive cUSD payments instantly, and trade as NFTs — all on
+            the carbon-negative Celo blockchain. No bank account needed.
+          </p>
+        </div>
 
-      <div className="section">
-        <h2>➕ Add Product</h2>
-        <form onSubmit={addProduct} className="form">
-          <input 
-            placeholder="Product Name" 
-            value={form.name}
-            onChange={e=>setForm(f=>({...f,name:e.target.value}))} 
-            required
-          />
-          <input 
-            placeholder="Price (cUSD)" 
-            type="number" 
-            step="0.01" 
-            min="0"
-            value={form.price}
-            onChange={e=>setForm(f=>({...f,price:e.target.value}))} 
-            required
-          />
-          
-          <div className="image-upload-section">
-            <label className="upload-method-toggle">
-              <span>Upload method:</span>
-              <select 
-                value={uploadMethod} 
-                onChange={(e) => {
-                  setUploadMethod(e.target.value)
-                  clearImage()
-                }}
-                className="upload-method-select"
-              >
-                <option value="url">🔗 Paste Image URL (Manual)</option>
-                <option value="file">☁️ Upload to Cloud (Auto)</option>
-              </select>
-            </label>
+        <StatsBar products={products} provider={provider} marketAddress={MARKET_ADDRESS} marketAbi={marketAbi} />
 
-            {uploadMethod === 'url' ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Product Image URL (e.g., https://i.imgur.com/abc123.jpg)"
-                  value={form.imageUrl}
-                  onChange={e => handleImageUrlChange(e.target.value)}
-                />
-                <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem'}}>
-                  💡 Recommended: Upload to <a href="https://postimages.org" target="_blank" style={{color: '#4caf50'}}>PostImages</a>, <a href="https://imgur.com" target="_blank" style={{color: '#4caf50'}}>Imgur</a>, or <a href="https://imgbb.com" target="_blank" style={{color: '#4caf50'}}>ImgBB</a> (free), then paste URL here
-                </p>
-              </div>
-            ) : (
-              <div className="file-upload-container">
-                <label htmlFor="image-upload" className="file-upload-label">
-                  {loading ? '⏳ Uploading...' : '📁 Choose Image to Upload'}
-                </label>
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="file-upload-input"
-                  disabled={loading}
-                />
-                <p style={{fontSize: '0.85rem', color: '#b0b0b0', marginTop: '0.5rem', textAlign: 'center'}}>
-                  ☁️ Images uploaded to free cloud hosting (off-chain, saves gas costs)
-                </p>
-              </div>
-            )}
+        <div className="section animate-fadeInUp">
+          <h2>➕ List a Product</h2>
+          <form onSubmit={addProduct} className="form">
+            <input placeholder="Product Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+            <input placeholder="Price (cUSD)" type="number" step="0.01" min="0" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required />
+            <QuickAmounts onSelect={(v) => setForm(f => ({ ...f, price: v }))} />
 
-            {imagePreview && (
-              <div className="image-preview-container">
-                <img src={imagePreview} alt="Preview" className="image-preview" />
-                <button 
-                  type="button" 
-                  onClick={clearImage}
-                  className="btn btn-clear-image"
-                >
-                  ❌ Clear Image
-                </button>
-              </div>
-            )}
-          </div>
+            <div className="image-upload-section">
+              <label className="upload-method-toggle">
+                <span>Image:</span>
+                <select value={uploadMethod} onChange={e => { setUploadMethod(e.target.value); clearImage() }} className="upload-method-select">
+                  <option value="url">🔗 Paste URL</option>
+                  <option value="file">☁️ Upload</option>
+                </select>
+              </label>
 
-          <textarea 
-            placeholder="Product Description"
-            value={form.description}
-            onChange={e=>setForm(f=>({...f,description:e.target.value}))} 
-            required
-          />
-          <button disabled={!isConnected || loading} type="submit" className="btn btn-primary">
-            {loading ? '⏳ Adding…' : '✨ Add Product'}
-          </button>
-        </form>
-      </div>
-
-      <div className="section">
-        <h2>🛒 Available Products</h2>
-        {products.length === 0 && <p className="empty-state">No products listed yet. Be the first vendor! 🚀</p>}
-        <div className="products-grid">
-          {Array.isArray(products) && products.map((p) => (
-            <div key={Number(p.tokenId)} className="product-card">
-              {p.imageData && (
-                <img 
-                  src={p.imageData} 
-                  alt={p.name} 
-                  className="product-image"
-                  onError={(e) => e.target.style.display = 'none'}
-                />
+              {uploadMethod === 'url' ? (
+                <input type="text" placeholder="Image URL (e.g. https://i.imgur.com/...)" value={form.imageUrl} onChange={e => handleImageUrlChange(e.target.value)} />
+              ) : (
+                <div className="file-upload-container">
+                  <label htmlFor="image-upload" className="file-upload-label">
+                    {loading ? '⏳ Uploading...' : '📁 Choose Image'}
+                  </label>
+                  <input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="file-upload-input" disabled={loading} />
+                </div>
               )}
-              <h3>{p.name}</h3>
-              <p className="product-description">{p.description}</p>
-              <div className="nft-badge">🎨 NFT #{Number(p.tokenId)}</div>
-              <p className="product-price">💰 {ethers.utils.formatUnits(p.priceWei, decimals)} cUSD</p>
-              <p className="product-vendor">👤 Vendor: {p.vendor.slice(0,8)}...{p.vendor.slice(-6)}</p>
-              <div className="product-actions">
-                <button 
-                  disabled={loading || !isConnected} 
-                  onClick={() => buyNow(p.tokenId, p.priceWei)}
-                  className="btn btn-secondary"
-                >
-                  {loading ? '⏳ Processing…' : '🛍️ Buy Now & Burn NFT'}
-                </button>
-                {isFarcasterMiniApp && (
-                  <button 
-                    onClick={() => shareToFarcaster(p)}
-                    className="btn btn-share"
-                  >
-                    📣 Share
-                  </button>
-                )}
-              </div>
+
+              {imagePreview && (
+                <div className="image-preview-container">
+                  <img src={imagePreview} alt="Preview" className="image-preview" />
+                  <button type="button" onClick={clearImage} className="btn btn-danger btn-clear-image">✕ Remove</button>
+                </div>
+              )}
             </div>
-          ))}
+
+            <textarea placeholder="Product Description" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} required />
+            <button disabled={!isConnected || loading} type="submit" className="btn btn-primary">
+              {loading ? <><span className="loading-spinner" /> Listing...</> : '✨ List Product'}
+            </button>
+          </form>
         </div>
+
+        <div className="section animate-fadeInUp">
+          <h2>🛒 Marketplace</h2>
+          <SearchBar onSearch={setSearchQuery} onSort={setSortBy} />
+          {filteredProducts.length === 0 ? (
+            <EmptyState
+              icon={searchQuery ? '🔍' : '🛒'}
+              title={searchQuery ? 'No matching products' : 'No products listed yet'}
+              subtitle={searchQuery ? 'Try a different search term' : 'Be the first vendor — list your product now! 🚀'}
+            />
+          ) : (
+            <div className="products-grid">
+              {filteredProducts.map(p => (
+                <ProductCard
+                  key={Number(p.tokenId)}
+                  product={p}
+                  decimals={decimals}
+                  loading={loading}
+                  isConnected={isConnected}
+                  onBuy={confirmBuy}
+                  onShare={shareToFarcaster}
+                  isFarcaster={isFarcasterMiniApp}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Footer />
       </div>
-    </div>
+    </>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
