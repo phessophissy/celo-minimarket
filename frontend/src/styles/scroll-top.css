@@ -1,0 +1,23 @@
+.scroll-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--celo-green);
+  color: var(--celo-dark);
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  transition: all var(--transition-normal);
+  animation: fadeInUp 0.3s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(53, 208, 127, 0.35);
+}
