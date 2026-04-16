@@ -1,0 +1,32 @@
+.product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-card-header h3 {
+  flex: 1;
+}
+
+.price-amount {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.price-currency {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 0.25rem;
+}
+
+.product-card .loading-spinner {
+  width: 16px;
+  height: 16px;
+}
