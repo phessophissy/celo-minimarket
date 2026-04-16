@@ -1,0 +1,23 @@
+.price-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.price-tag-amount {
+  font-weight: 800;
+  color: var(--celo-green);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.price-tag-symbol {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.price-tag-sm .price-tag-amount { font-size: 1rem; }
+.price-tag-sm .price-tag-symbol { font-size: 0.75rem; }
+.price-tag-md .price-tag-amount { font-size: 1.4rem; }
+.price-tag-md .price-tag-symbol { font-size: 0.85rem; }
+.price-tag-lg .price-tag-amount { font-size: 2rem; }
+.price-tag-lg .price-tag-symbol { font-size: 1rem; }
