@@ -1,0 +1,30 @@
+.network-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.network-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.network-badge.connected .network-dot {
+  background: var(--celo-green);
+  box-shadow: 0 0 6px rgba(53, 208, 127, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.network-badge.connected {
+  color: var(--celo-green);
+  border-color: rgba(53, 208, 127, 0.2);
+}
