@@ -1,78 +1,42 @@
-import React from 'react'
+import { Component } from 'react';
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { hasError: false, error: null }
-  }
+export default class ErrorBoundary extends Component {
+  state = { hasError: false, error: null };
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
-  componentDidCatch(error, errorInfo) {
-    console.error('ErrorBoundary caught:', error, errorInfo)
+  componentDidCatch(error, info) {
+    console.error('ErrorBoundary caught:', error, info);
   }
 
   render() {
     if (this.state.hasError) {
       return (
         <div style={{
-          padding: '2rem',
-          maxWidth: '600px',
-          margin: '2rem auto',
-          background: 'linear-gradient(135deg, #1a2f23 0%, #2d4a3e 100%)',
-          color: '#e8f5e9',
-          borderRadius: '16px',
-          border: '2px solid rgba(239, 83, 80, 0.5)',
-          fontFamily: 'Century Gothic, sans-serif'
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', minHeight: '60vh', padding: '2rem',
+          textAlign: 'center', color: '#8B949E'
         }}>
-          <h2 style={{ color: '#ef5350' }}>⚠️ Application Error</h2>
-          <p>Something went wrong. This might be caused by:</p>
-          <ul>
-            <li>Multiple wallet extensions conflicting (MetaMask, Pocket Universe, etc.)</li>
-            <li>Browser extension compatibility issues</li>
-            <li>Network connectivity problems</li>
-          </ul>
-          <p><strong>Try:</strong></p>
-          <ol>
-            <li>Disabling conflicting wallet extensions</li>
-            <li>Refreshing the page</li>
-            <li>Using a different browser or incognito mode</li>
-          </ol>
-          <button 
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+          <h2 style={{ color: '#F0F6FC', marginBottom: '0.5rem' }}>Something went wrong</h2>
+          <p style={{ marginBottom: '1.5rem', maxWidth: '400px' }}>
+            The app encountered an error. Please refresh the page.
+          </p>
+          <button
             onClick={() => window.location.reload()}
             style={{
-              padding: '0.75rem 1.5rem',
-              background: 'linear-gradient(135deg, #4caf50 0%, #81c784 100%)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              marginTop: '1rem'
+              padding: '0.75rem 2rem', background: '#35D07F', color: '#2E3338',
+              border: 'none', borderRadius: '10px', fontWeight: 700,
+              fontSize: '1rem', cursor: 'pointer'
             }}
           >
-            🔄 Reload Page
+            Refresh Page
           </button>
-          <details style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>
-            <summary style={{ cursor: 'pointer' }}>Technical Details</summary>
-            <pre style={{ 
-              background: 'rgba(0,0,0,0.3)', 
-              padding: '1rem', 
-              borderRadius: '8px',
-              overflow: 'auto',
-              marginTop: '0.5rem'
-            }}>
-              {this.state.error?.toString()}
-            </pre>
-          </details>
         </div>
-      )
+      );
     }
-
-    return this.props.children
+    return this.props.children;
   }
 }
-
-export default ErrorBoundary
