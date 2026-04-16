@@ -1,0 +1,51 @@
+.celo-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.celo-particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.06;
+  filter: blur(60px);
+}
+
+.celo-particle-1 {
+  width: 400px; height: 400px;
+  background: var(--celo-green);
+  top: -10%; left: -5%;
+  animation: float 20s ease-in-out infinite;
+}
+.celo-particle-2 {
+  width: 300px; height: 300px;
+  background: var(--celo-gold);
+  top: 40%; right: -8%;
+  animation: float 25s ease-in-out infinite reverse;
+}
+.celo-particle-3 {
+  width: 250px; height: 250px;
+  background: var(--celo-violet);
+  bottom: -5%; left: 30%;
+  animation: float 18s ease-in-out infinite 2s;
+}
+.celo-particle-4 {
+  width: 200px; height: 200px;
+  background: var(--celo-green);
+  top: 60%; left: 10%;
+  animation: float 22s ease-in-out infinite 1s;
+}
+.celo-particle-5 {
+  width: 180px; height: 180px;
+  background: var(--celo-gold);
+  top: 20%; right: 20%;
+  animation: float 15s ease-in-out infinite 3s;
+}
+.celo-particle-6 {
+  width: 160px; height: 160px;
+  background: var(--celo-blue);
+  bottom: 20%; right: 10%;
+  animation: float 28s ease-in-out infinite 2.5s;
+}
