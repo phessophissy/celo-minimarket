@@ -1,0 +1,29 @@
+[data-theme="light"] {
+  --bg-primary: #FAFBFC;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F6F8FA;
+  --bg-input: #F6F8FA;
+  --text-primary: #1F2328;
+  --text-secondary: #656D76;
+  --text-muted: #8C959F;
+  --border-default: #D0D7DE;
+  --border-muted: #E8EAED;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(53, 208, 127, 0.1);
+}
+
+[data-theme="light"] .header {
+  background: rgba(250, 251, 252, 0.92);
+}
+
+[data-theme="light"] .description-card {
+  background: linear-gradient(145deg, rgba(53, 208, 127, 0.04) 0%, rgba(251, 204, 92, 0.03) 100%);
+}
+
+[data-theme="light"] .btn-connect,
+[data-theme="light"] .btn-primary {
+  color: white;
+}
