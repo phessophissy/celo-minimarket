@@ -1,0 +1,24 @@
+.quick-amounts {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.quick-amount-btn {
+  padding: 0.4rem 0.75rem;
+  background: rgba(53, 208, 127, 0.08);
+  border: 1px solid rgba(53, 208, 127, 0.15);
+  border-radius: var(--radius-sm);
+  color: var(--celo-green);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quick-amount-btn:hover {
+  background: rgba(53, 208, 127, 0.18);
+  border-color: var(--celo-green);
+  transform: translateY(-1px);
+}
