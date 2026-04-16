@@ -1,0 +1,19 @@
+.theme-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all var(--transition-normal);
+}
+
+.theme-toggle:hover {
+  border-color: var(--celo-gold);
+  transform: rotate(15deg);
+  box-shadow: 0 0 12px rgba(251, 204, 92, 0.2);
+}
