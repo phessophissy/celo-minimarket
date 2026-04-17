@@ -1,9 +1,12 @@
 import { createAppKit } from '@reown/appkit/react'
 import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
 import { celo, celoAlfajores } from '@reown/appkit/networks'
+import { detectMiniPay } from './minipay'
 
 // Get your projectId from https://cloud.reown.com
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID || '7f100a30681d28871c0aaa5d1f6d1121'
+
+const isMiniPay = detectMiniPay()
 
 const metadata = {
   name: 'Celo MiniMarket',
