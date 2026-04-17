@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as OptimizedImage } from './OptimizedImage.jsx';
+export { default as ImagePreview } from './ImagePreview.jsx';
+export { default as ImagePlaceholder } from './ImagePlaceholder.jsx';
 export { default as EventFeed } from './EventFeed.jsx';
 export { default as EventListener } from './EventListener.jsx';
 export { default as LiveIndicator } from './LiveIndicator.jsx';

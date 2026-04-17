@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { imagesConfig } from './imageUtils.js';
 export { eventsConfig } from './contractEvents.js';
 export { darkmodeConfig } from './darkMode.js';
 export { detailConfig } from './productDetail.js';
