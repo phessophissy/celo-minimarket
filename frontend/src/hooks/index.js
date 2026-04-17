@@ -3,3 +3,4 @@ export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
 export { default as useSeo } from './useSeo.js';
+export { default as useValidation } from './useValidation.js';
