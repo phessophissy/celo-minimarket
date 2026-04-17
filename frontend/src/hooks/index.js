@@ -53,3 +53,4 @@ export { default as useApi-Docs } from './useApi-Docs.js';
 export { default as useSeo } from './useSeo.js';
 export { default as useValidation } from './useValidation.js';
 export { default as useMiniPay } from './useMiniPay.js';
+export { default as useMiniPayAutoConnect } from './useMiniPayAutoConnect.js';
