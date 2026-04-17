@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as OptimizedImage } from './OptimizedImage.jsx';
+export { default as ImagePreview } from './ImagePreview.jsx';
+export { default as ImagePlaceholder } from './ImagePlaceholder.jsx';
