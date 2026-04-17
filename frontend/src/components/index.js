@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ViewToggle } from './ViewToggle.jsx';
+export { default as ListView } from './ListView.jsx';
+export { default as GridView } from './GridView.jsx';
 export { default as LogViewer } from './LogViewer.jsx';
 export { default as LogEntry } from './LogEntry.jsx';
 export { default as LogExport } from './LogExport.jsx';
