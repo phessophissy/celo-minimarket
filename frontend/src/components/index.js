@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as NetworkIndicator } from './NetworkIndicator.jsx';
+export { default as OfflineBanner } from './OfflineBanner.jsx';
+export { default as ConnectionQuality } from './ConnectionQuality.jsx';
