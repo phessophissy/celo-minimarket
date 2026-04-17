@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as NetworkIndicator } from './NetworkIndicator.jsx';
+export { default as OfflineBanner } from './OfflineBanner.jsx';
+export { default as ConnectionQuality } from './ConnectionQuality.jsx';
 export { default as ViewToggle } from './ViewToggle.jsx';
 export { default as ListView } from './ListView.jsx';
 export { default as GridView } from './GridView.jsx';
