@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { addressConfig } from './addressCopy.js';
 export { ratelimitConfig } from './rateLimiter.js';
 export { themeConfig } from './themeCustom.js';
 export { performanceConfig } from './perfMonitor.js';
