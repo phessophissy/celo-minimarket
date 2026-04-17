@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as Pagination } from './Pagination.jsx';
+export { default as InfiniteScroll } from './InfiniteScroll.jsx';
+export { default as PageSizeSelector } from './PageSizeSelector.jsx';
