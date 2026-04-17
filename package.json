@@ -1,22 +1,25 @@
 {
-  "name": "celo-minimarket",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@nomicfoundation/hardhat-verify": "^2.0.9",
-    "dotenv": "^17.2.3",
-    "hardhat": "^2.27.0"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0"
-  },
-  "type": "module"
+    "name":  "celo-minimarket",
+    "version":  "1.0.0",
+    "description":  "",
+    "main":  "index.js",
+    "scripts":  {
+                    "test":  "npx hardhat test",
+                    "test:coverage":  "npx hardhat coverage"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "devDependencies":  {
+                            "@nomicfoundation/hardhat-toolbox":  "^5.0.0",
+                            "@nomicfoundation/hardhat-verify":  "^2.0.9",
+                            "dotenv":  "^17.2.3",
+                            "hardhat":  "^2.27.0"
+                        },
+    "dependencies":  {
+                         "@openzeppelin/contracts":  "^5.4.0"
+                     },
+    "type":  "module"
 }
