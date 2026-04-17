@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { securityConfig } from './securityHeaders.js';
 export { receiptConfig } from './receipt.js';
 export { keyboardConfig } from './keyboardMap.js';
 export { exportConfig } from './dataExport.js';
