@@ -2,6 +2,7 @@ export { default as useCopyToClipboard } from './useCopyToClipboard.js';
 export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
+export { default as useReceipt } from './useReceipt.js';
 export { default as useKeyboard } from './useKeyboard.js';
 export { default as useExport } from './useExport.js';
 export { default as useReconnect } from './useReconnect.js';
