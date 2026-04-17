@@ -1,0 +1,28 @@
+import { useState, useEffect } from 'react';
+
+/**
+ * PageSizeSelector component for the pagination feature.
+ * Part of the add pagination for products implementation.
+ */
+export default function PageSizeSelector(props) {
+  const [isActive, setIsActive] = useState(false);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Initialize pagination feature state
+    setIsActive(true);
+    return () => setIsActive(false);
+  }, []);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="pagination-widget pagination-pagesizeselector" role="region" aria-label="PageSizeSelector">
+      <div className="pagination-content">
+        {props.children || (
+          <span className="pagination-placeholder">PageSizeSelector ready</span>
+        )}
+      </div>
+    </div>
+  );
+}
