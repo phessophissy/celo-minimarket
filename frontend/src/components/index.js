@@ -14,6 +14,10 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as VendorDashboard } from './VendorDashboard.jsx';
+export { default as VendorBadge } from './VendorBadge.jsx';
+export { default as VendorStats } from './VendorStats.jsx';
+export { default as VendorProductRow } from './VendorProductRow.jsx';
 export { default as PriceRangeDisplay } from './PriceRangeDisplay.jsx';
 export { default as PriceInput } from './PriceInput.jsx';
 export { default as PriceComparison } from './PriceComparison.jsx';

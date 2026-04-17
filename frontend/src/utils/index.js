@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { vendorConfig } from './v';
 export { pricingConfig } from './priceUtils.js';
 export { notificationsConfig } from './notifications.js';
 export { searchConfig } from './searchUtils.js';
