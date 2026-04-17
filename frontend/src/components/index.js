@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as GasEstimateDisplay } from './GasEstimateDisplay.jsx';
+export { default as GasPrice } from './GasPrice.jsx';
+export { default as GasWarning } from './GasWarning.jsx';
 export { default as BadgeDisplay } from './BadgeDisplay.jsx';
 export { default as NewBadge } from './NewBadge.jsx';
 export { default as VerifiedBadge } from './VerifiedBadge.jsx';
