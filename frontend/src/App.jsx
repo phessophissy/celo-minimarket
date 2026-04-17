@@ -224,7 +224,7 @@ export default function App({ onReady }) {
           <h2>Peer-to-Peer Commerce on Celo</h2>
           <p className="description-text">
             List products, receive cUSD payments instantly, and trade as NFTs — all on
-            the carbon-negative Celo blockchain. No bank account needed.
+            the carbon-negative Celo blockchain. {isMiniPay ? 'Powered by MiniPay.' : 'No bank account needed.'}
           </p>
         </div>
 
