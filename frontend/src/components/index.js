@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as MobileMenu } from './MobileMenu.jsx';
+export { default as TouchHandler } from './TouchHandler.jsx';
+export { default as SwipeDetector } from './SwipeDetector.jsx';
 export { default as VendorDashboard } from './VendorDashboard.jsx';
 export { default as VendorBadge } from './VendorBadge.jsx';
 export { default as VendorStats } from './VendorStats.jsx';
