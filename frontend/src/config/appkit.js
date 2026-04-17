@@ -10,7 +10,7 @@ const isMiniPay = detectMiniPay()
 
 const metadata = {
   name: 'Celo MiniMarket',
-  description: 'Decentralized marketplace on Celo blockchain',
+  description: 'Decentralized marketplace on Celo blockchain — MiniPay compatible',
   url: 'https://celo-minimarket.vercel.app',
   icons: ['https://celo-minimarket.vercel.app/logo.svg']
 }
