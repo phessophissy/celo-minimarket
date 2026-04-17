@@ -1,5 +1,7 @@
 node_modules
 .env
+.env.*
+!.env.example
 coverage
 coverage.json
 typechain
@@ -9,3 +11,11 @@ typechain-types
 cache
 artifacts
 .vercel
+
+# Sensitive files — never commit
+scripts/wallets.json
+scripts/*.json
+*.pem
+*.key
+*.secret
+*.mnemonic
