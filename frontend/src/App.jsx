@@ -65,6 +65,13 @@ export default function App({ onReady }) {
 
   useEffect(() => { loadProducts() }, [loadProducts])
 
+  // Auto-connect when running inside MiniPay
+  useEffect(() => {
+    if (isMiniPay && !isConnected && window.ethereum?.isMiniPay) {
+      open({ view: 'Connect' }).catch(() => {})
+    }
+  }, [isMiniPay, isConnected, open])
+
   useEffect(() => {
     if (!appReady) { setAppReady(true); signalReady() }
   }, [appReady])
