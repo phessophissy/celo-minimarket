@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as VendorProfileCard } from './VendorProfileCard.jsx';
+export { default as VendorHistory } from './VendorHistory.jsx';
+export { default as VendorRating } from './VendorRating.jsx';
 export { default as AutosaveIndicator } from './AutosaveIndicator.jsx';
 export { default as DraftRecovery } from './DraftRecovery.jsx';
 export { default as DraftBanner } from './DraftBanner.jsx';
