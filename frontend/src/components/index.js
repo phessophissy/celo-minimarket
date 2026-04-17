@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ShortcutHelp } from './ShortcutHelp.jsx';
+export { default as KeyboardGuide } from './KeyboardGuide.jsx';
+export { default as HotkeyDisplay } from './HotkeyDisplay.jsx';
 export { default as ExportButton } from './ExportButton.jsx';
 export { default as ExportModal } from './ExportModal.jsx';
 export { default as FormatSelector } from './FormatSelector.jsx';
