@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as GasEstimateDisplay } from './GasEstimateDisplay.jsx';
+export { default as GasPrice } from './GasPrice.jsx';
+export { default as GasWarning } from './GasWarning.jsx';
