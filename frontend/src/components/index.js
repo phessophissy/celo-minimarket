@@ -14,6 +14,11 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ProductCardSkeleton } from './ProductCardSkeleton.jsx';
+export { default as StatsBarSkeleton } from './StatsBarSkeleton.jsx';
+export { default as LoadingOverlay } from './LoadingOverlay.jsx';
+export { default as TransactionProgress } from './TransactionProgress.jsx';
+export { default as LoadingSpinner } from './LoadingSpinner.jsx';
 export { default as SkipLink } from './SkipLink.jsx';
 export { default as AccessibleIcon } from './AccessibleIcon.jsx';
 export { default as FocusTrap } from './FocusTrap.jsx';
