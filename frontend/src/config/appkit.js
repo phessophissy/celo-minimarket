@@ -22,6 +22,7 @@ const networks = [celo, celoAlfajores]
 const ethers5Adapter = new Ethers5Adapter()
 
 // Create the AppKit instance
+// When in MiniPay, prefer injected provider for seamless connection
 export const appKit = createAppKit({
   adapters: [ethers5Adapter],
   networks,
@@ -37,7 +38,8 @@ export const appKit = createAppKit({
   themeVariables: {
     '--w3m-accent': '#FBCC5C', // Celo yellow
     '--w3m-border-radius-master': '2px'
-  }
+  },
+  ...(isMiniPay && { featuredWalletIds: [] }),
 })
 
 export { projectId, metadata }
