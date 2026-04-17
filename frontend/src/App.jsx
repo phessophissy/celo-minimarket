@@ -3,6 +3,7 @@ import { useAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/re
 import { ethers } from 'ethers'
 import marketArtifact from './abi/CeloMiniMarket.json'
 import { getIsFarcasterMiniApp, getSafeAreaInsets, composeCast, getFarcasterUser, signalReady } from './config/farcaster'
+import { detectMiniPay } from './config/minipay'
 import {
   Footer, StatsBar, SearchBar, ProductCard,
   ToastContainer, toast, ThemeToggle, NetworkBadge,
