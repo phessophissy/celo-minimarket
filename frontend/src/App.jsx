@@ -33,6 +33,8 @@ export default function App({ onReady }) {
   const [buyModal, setBuyModal] = useState(null)
 
   const isFarcasterMiniApp = getIsFarcasterMiniApp()
+  const isMiniPay = detectMiniPay()
+  const hideConnectBtn = isMiniPay
 
   const provider = useMemo(() => {
     if (walletProvider) {
