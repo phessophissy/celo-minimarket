@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { errorsConfig } from './errors.js';
 export { accessibilityConfig } from './a';
 export { categoriesConfig } from './categories.js';
 export { vendorConfig } from './v';
