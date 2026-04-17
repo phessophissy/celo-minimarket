@@ -3,3 +3,18 @@ export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
 export { default as usePerformance } from './usePerformance.js';
+export { default as useErrorreport } from './useErrorreport.js';
+export { default as useOnboarding } from './useOnboarding.js';
+export { default as useBatch } from './useBatch.js';
+export { default as useI18n } from './useI18n.js';
+export { default as useSecurity } from './useSecurity.js';
+export { default as useReceipt } from './useReceipt.js';
+export { default as useKeyboard } from './useKeyboard.js';
+export { default as useExport } from './useExport.js';
+export { default as useReconnect } from './useReconnect.js';
+export { default as useDeploy-Docs } from './useDeploy-Docs.js';
+export { default as useContributing } from './useContributing.js';
+export { default as useChangelog } from './useChangelog.js';
+export { default as useApi-Docs } from './useApi-Docs.js';
+export { default as useSeo } from './useSeo.js';
+export { default as useValidation } from './useValidation.js';
