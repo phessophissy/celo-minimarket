@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ReconnectBanner } from './ReconnectBanner.jsx';
+export { default as ConnectionMonitor } from './ConnectionMonitor.jsx';
+export { default as WalletPersist } from './WalletPersist.jsx';
 export { default as MetaTags } from './MetaTags.jsx';
 export { default as StructuredData } from './StructuredData.jsx';
 export { default as OpenGraphTags } from './OpenGraphTags.jsx';
