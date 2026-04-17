@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { searchConfig } from './searchUtils.js';
 export { walletConfig } from './walletBalance.js';
 export { sharingConfig } from './sharing.js';
 export { imagesConfig } from './imageUtils.js';
