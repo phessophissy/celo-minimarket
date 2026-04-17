@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as CopyButton } from './CopyButton.jsx';
+export { default as AddressCopy } from './AddressCopy.jsx';
+export { default as CopyFeedback } from './CopyFeedback.jsx';
 export { default as NetworkIndicator } from './NetworkIndicator.jsx';
 export { default as OfflineBanner } from './OfflineBanner.jsx';
 export { default as ConnectionQuality } from './ConnectionQuality.jsx';

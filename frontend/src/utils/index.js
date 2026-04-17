@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { clipboardConfig } from './clipboard.js';
 export { networkConfig } from './networkStatus.js';
 export { viewsConfig } from './viewToggle.js';
 export { loggingConfig } from './interactionLog.js';
