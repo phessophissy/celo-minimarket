@@ -2,6 +2,7 @@ export { default as useCopyToClipboard } from './useCopyToClipboard.js';
 export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
+export { default as useAutosave } from './useAutosave.js';
 export { default as useGas } from './useGas.js';
 export { default as useBadges } from './useBadges.js';
 export { default as useCountdown } from './useCountdown.js';
