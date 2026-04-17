@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { paginationConfig } from './pagination.js';
 export { tooltipsConfig } from './tooltipUtils.js';
 export { analyticsConfig } from './analytics.js';
 export { clipboardConfig } from './clipboard.js';

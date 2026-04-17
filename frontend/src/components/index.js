@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as Pagination } from './Pagination.jsx';
+export { default as InfiniteScroll } from './InfiniteScroll.jsx';
+export { default as PageSizeSelector } from './PageSizeSelector.jsx';
 export { default as Tooltip } from './Tooltip.jsx';
 export { default as TooltipProvider } from './TooltipProvider.jsx';
 export { default as InfoTooltip } from './InfoTooltip.jsx';
