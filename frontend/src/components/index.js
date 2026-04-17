@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as NotificationCenter } from './NotificationCenter.jsx';
+export { default as NotificationToast } from './NotificationToast.jsx';
+export { default as NotificationBadge } from './NotificationBadge.jsx';
 export { default as SearchSuggestions } from './SearchSuggestions.jsx';
 export { default as AdvancedFilters } from './AdvancedFilters.jsx';
 export { default as FilterChips } from './FilterChips.jsx';
