@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ThemeProvider } from './ThemeProvider.jsx';
+export { default as ColorScheme } from './ColorScheme.jsx';
+export { default as ContrastChecker } from './ContrastChecker.jsx';
 export { default as ProductDetailModal } from './ProductDetailModal.jsx';
 export { default as ProductMeta } from './ProductMeta.jsx';
 export { default as FullScreenImage } from './FullScreenImage.jsx';
