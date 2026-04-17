@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as LanguagePicker } from './LanguagePicker.jsx';
+export { default as TranslatedText } from './TranslatedText.jsx';
+export { default as LocaleProvider } from './LocaleProvider.jsx';
