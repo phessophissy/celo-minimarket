@@ -76,6 +76,14 @@ export default function App({ onReady }) {
     if (!appReady) { setAppReady(true); signalReady() }
   }, [appReady])
 
+  // Add MiniPay class to body for CSS targeting
+  useEffect(() => {
+    if (isMiniPay) {
+      document.body.classList.add('minipay-env')
+    }
+    return () => document.body.classList.remove('minipay-env')
+  }, [isMiniPay])
+
   const filteredProducts = useMemo(() => {
     let result = [...products]
     if (searchQuery) {
