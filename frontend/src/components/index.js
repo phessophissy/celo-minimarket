@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as VendorProfileCard } from './VendorProfileCard.jsx';
+export { default as VendorHistory } from './VendorHistory.jsx';
+export { default as VendorRating } from './VendorRating.jsx';
