@@ -1,0 +1,35 @@
+.minipay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  background: linear-gradient(135deg, #FBCC5C 0%, #35D07F 100%);
+  color: #1a1a2e;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(53, 208, 127, 0.3);
+  animation: minipay-pulse 2s ease-in-out infinite;
+}
+
+@keyframes minipay-pulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(53, 208, 127, 0.3); }
+  50% { box-shadow: 0 2px 16px rgba(53, 208, 127, 0.5); }
+}
+
+/* MiniPay-optimized touch targets */
+.minipay-env .btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.minipay-env .products-grid {
+  gap: 1rem;
+}
+
+.minipay-env .form input,
+.minipay-env .form textarea,
+.minipay-env .form select {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
