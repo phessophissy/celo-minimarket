@@ -201,9 +201,14 @@ export default function App({ onReady }) {
           <div className="header-nav">
             <NetworkBadge isConnected={isConnected} />
             <ThemeToggle />
-            <button className="btn btn-connect" onClick={() => open()}>
-              {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'Connect Wallet'}
-            </button>
+            {!hideConnectBtn && (
+              <button className="btn btn-connect" onClick={() => open()}>
+                {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'Connect Wallet'}
+              </button>
+            )}
+            {hideConnectBtn && isConnected && (
+              <span className="minipay-badge">MiniPay ✓</span>
+            )}
           </div>
         </div>
 
