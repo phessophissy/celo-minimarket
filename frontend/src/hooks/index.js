@@ -3,3 +3,10 @@ export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
 export { default as useExport } from './useExport.js';
+export { default as useReconnect } from './useReconnect.js';
+export { default as useDeploy-Docs } from './useDeploy-Docs.js';
+export { default as useContributing } from './useContributing.js';
+export { default as useChangelog } from './useChangelog.js';
+export { default as useApi-Docs } from './useApi-Docs.js';
+export { default as useSeo } from './useSeo.js';
+export { default as useValidation } from './useValidation.js';
