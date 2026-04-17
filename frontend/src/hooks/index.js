@@ -2,6 +2,7 @@ export { default as useCopyToClipboard } from './useCopyToClipboard.js';
 export { default as useLocalStorage } from './useLocalStorage.js';
 export { default as useMediaQuery } from './useMediaQuery.js';
 
+export { default as useFavorites } from './useFavorites.js';
 export { default as usePagination } from './usePagination.js';
 export { default as useTooltips } from './useTooltips.js';
 export { default as useAnalytics } from './useAnalytics.js';

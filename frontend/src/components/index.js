@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as FavoriteButton } from './FavoriteButton.jsx';
+export { default as FavoritesList } from './FavoritesList.jsx';
+export { default as FavoritesCount } from './FavoritesCount.jsx';
 export { default as Pagination } from './Pagination.jsx';
 export { default as InfiniteScroll } from './InfiniteScroll.jsx';
 export { default as PageSizeSelector } from './PageSizeSelector.jsx';
