@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ProductDetailModal } from './ProductDetailModal.jsx';
+export { default as ProductMeta } from './ProductMeta.jsx';
+export { default as FullScreenImage } from './FullScreenImage.jsx';
 export { default as FavoriteButton } from './FavoriteButton.jsx';
 export { default as FavoritesList } from './FavoritesList.jsx';
 export { default as FavoritesCount } from './FavoritesCount.jsx';
