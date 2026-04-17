@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as RateLimitGuard } from './RateLimitGuard.jsx';
+export { default as ThrottledButton } from './ThrottledButton.jsx';
+export { default as CooldownIndicator } from './CooldownIndicator.jsx';
