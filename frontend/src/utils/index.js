@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { errorreportConfig } from './errorReport.js';
 export { onboardingConfig } from './onboarding.js';
 export { batchConfig } from './batchOps.js';
 export { i18nConfig } from './i18n.js';
