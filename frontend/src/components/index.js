@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as RateLimitGuard } from './RateLimitGuard.jsx';
+export { default as ThrottledButton } from './ThrottledButton.jsx';
+export { default as CooldownIndicator } from './CooldownIndicator.jsx';
 export { default as ThemeCustomizer } from './ThemeCustomizer.jsx';
 export { default as ColorPicker } from './ColorPicker.jsx';
 export { default as ThemePreview } from './ThemePreview.jsx';
