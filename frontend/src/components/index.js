@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as Breadcrumb } from './Breadcrumb.jsx';
+export { default as BreadcrumbItem } from './BreadcrumbItem.jsx';
+export { default as BreadcrumbNav } from './BreadcrumbNav.jsx';
 export { default as AddressCopyButton } from './AddressCopyButton.jsx';
 export { default as TruncatedAddress } from './TruncatedAddress.jsx';
 export { default as AddressDisplay } from './AddressDisplay.jsx';

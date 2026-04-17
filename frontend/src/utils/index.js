@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { breadcrumbsConfig } from './breadcrumbs.js';
 export { addressConfig } from './addressCopy.js';
 export { ratelimitConfig } from './rateLimiter.js';
 export { themeConfig } from './themeCustom.js';
