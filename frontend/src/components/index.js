@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ShareMenu } from './ShareMenu.jsx';
+export { default as ProductShareButton } from './ProductShareButton.jsx';
+export { default as SocialLinks } from './SocialLinks.jsx';
 export { default as OptimizedImage } from './OptimizedImage.jsx';
 export { default as ImagePreview } from './ImagePreview.jsx';
 export { default as ImagePlaceholder } from './ImagePlaceholder.jsx';
