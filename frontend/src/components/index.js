@@ -14,6 +14,10 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as SkipLink } from './SkipLink.jsx';
+export { default as AccessibleIcon } from './AccessibleIcon.jsx';
+export { default as FocusTrap } from './FocusTrap.jsx';
+export { default as ScreenReaderAnnounce } from './ScreenReaderAnnounce.jsx';
 export { default as CategoryFilter } from './CategoryFilter.jsx';
 export { default as CategoryBadge } from './CategoryBadge.jsx';
 export { default as CategorySelector } from './CategorySelector.jsx';
