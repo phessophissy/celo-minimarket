@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as AnalyticsProvider } from './AnalyticsProvider.jsx';
+export { default as TrackEvent } from './TrackEvent.jsx';
+export { default as AnalyticsDashboard } from './AnalyticsDashboard.jsx';
 export { default as CopyButton } from './CopyButton.jsx';
 export { default as AddressCopy } from './AddressCopy.jsx';
 export { default as CopyFeedback } from './CopyFeedback.jsx';
