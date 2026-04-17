@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { themeConfig } from './themeCustom.js';
 export { performanceConfig } from './perfMonitor.js';
 export { errorreportConfig } from './errorReport.js';
 export { onboardingConfig } from './onboarding.js';

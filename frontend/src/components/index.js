@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ThemeCustomizer } from './ThemeCustomizer.jsx';
+export { default as ColorPicker } from './ColorPicker.jsx';
+export { default as ThemePreview } from './ThemePreview.jsx';
 export { default as PerfOverlay } from './PerfOverlay.jsx';
 export { default as MetricsDisplay } from './MetricsDisplay.jsx';
 export { default as RenderTimer } from './RenderTimer.jsx';
