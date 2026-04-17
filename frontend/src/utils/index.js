@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { loggingConfig } from './interactionLog.js';
 export { profilesConfig } from './vendorProfile.js';
 export { autosaveConfig } from './autosave.js';
 export { gasConfig } from './gasEstimate.js';
