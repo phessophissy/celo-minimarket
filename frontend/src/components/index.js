@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as PriceRangeDisplay } from './PriceRangeDisplay.jsx';
+export { default as PriceInput } from './PriceInput.jsx';
+export { default as PriceComparison } from './PriceComparison.jsx';
 export { default as NotificationCenter } from './NotificationCenter.jsx';
 export { default as NotificationToast } from './NotificationToast.jsx';
 export { default as NotificationBadge } from './NotificationBadge.jsx';
