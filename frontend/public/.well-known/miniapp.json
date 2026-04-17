@@ -1,0 +1,32 @@
+{
+  "name": "Celo MiniMarket",
+  "version": "1.0.0",
+  "description": "P2P marketplace on Celo — list and buy products with cUSD stablecoins",
+  "compatibility": {
+    "minipay": true,
+    "farcaster": true,
+    "web": true
+  },
+  "chain": {
+    "id": 42220,
+    "name": "Celo",
+    "rpcUrl": "https://forno.celo.org"
+  },
+  "supportedTokens": [
+    {
+      "symbol": "cUSD",
+      "address": "0x765DE816845861e75A25fCA122bb6898B8B1282a",
+      "decimals": 18
+    }
+  ],
+  "features": [
+    "product-listing",
+    "stablecoin-payments",
+    "nft-minting",
+    "peer-to-peer"
+  ],
+  "urls": {
+    "app": "https://celo-minimarket.vercel.app",
+    "icon": "https://celo-minimarket.vercel.app/icon-1024.png"
+  }
+}
