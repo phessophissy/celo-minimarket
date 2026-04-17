@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as PerfOverlay } from './PerfOverlay.jsx';
+export { default as MetricsDisplay } from './MetricsDisplay.jsx';
+export { default as RenderTimer } from './RenderTimer.jsx';
 export { default as ErrorReportDialog } from './ErrorReportDialog.jsx';
 export { default as CrashScreen } from './CrashScreen.jsx';
 export { default as ErrorContext } from './ErrorContext.jsx';
