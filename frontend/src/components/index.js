@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as ExportButton } from './ExportButton.jsx';
+export { default as ExportModal } from './ExportModal.jsx';
+export { default as FormatSelector } from './FormatSelector.jsx';
 export { default as ReconnectBanner } from './ReconnectBanner.jsx';
 export { default as ConnectionMonitor } from './ConnectionMonitor.jsx';
 export { default as WalletPersist } from './WalletPersist.jsx';
