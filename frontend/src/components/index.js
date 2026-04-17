@@ -13,3 +13,7 @@ export { default as ConfirmModal } from './ConfirmModal.jsx';
 export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
+
+export { default as ShareMenu } from './ShareMenu.jsx';
+export { default as ProductShareButton } from './ProductShareButton.jsx';
+export { default as SocialLinks } from './SocialLinks.jsx';
