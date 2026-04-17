@@ -1,6 +1,7 @@
 export * from './format.js';
 export * from './constants.js';
 
+export { badgesConfig } from './productBadges.js';
 export { countdownConfig } from './countdown.js';
 export { breadcrumbsConfig } from './breadcrumbs.js';
 export { addressConfig } from './addressCopy.js';

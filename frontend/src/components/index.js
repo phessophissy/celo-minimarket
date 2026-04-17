@@ -14,6 +14,9 @@ export { default as ScrollTop } from './ScrollTop.jsx';
 export { default as CeloBadge } from './CeloBadge.jsx';
 export { default as Skeleton } from './Skeleton.jsx';
 
+export { default as BadgeDisplay } from './BadgeDisplay.jsx';
+export { default as NewBadge } from './NewBadge.jsx';
+export { default as VerifiedBadge } from './VerifiedBadge.jsx';
 export { default as CountdownTimer } from './CountdownTimer.jsx';
 export { default as TimeRemaining } from './TimeRemaining.jsx';
 export { default as TimerDisplay } from './TimerDisplay.jsx';
