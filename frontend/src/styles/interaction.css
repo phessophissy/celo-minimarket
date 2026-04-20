@@ -1,0 +1,7 @@
+.cursor-pointer{cursor:pointer}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}
+.pointer-events-none{pointer-events:none}.select-none{user-select:none}
+.transition-fast{transition:all 150ms ease}.transition-normal{transition:all 250ms ease}.transition-slow{transition:all 400ms ease}
+.hover\:opacity-80:hover{opacity:.8}.hover\:shadow-glow:hover{box-shadow:0 0 20px rgba(53,208,127,.3)}
+.hover\:bg-hover:hover{background-color:#1c2333}.hover\:border-primary:hover{border-color:#35D07F}
+.focus\:outline-primary:focus{outline:2px solid #35D07F;outline-offset:2px}
+.active\:scale-95:active{transform:scale(.95)}.disabled\:opacity-50:disabled{opacity:.5;cursor:not-allowed}
