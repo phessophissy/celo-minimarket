@@ -1,0 +1,10 @@
+// Mock data generators - barrel export
+export { createMockDataHandler1, transformMockDataData1 } from './module1.js';
+export { createMockDataHandler2, transformMockDataData2 } from './module2.js';
+export { createMockDataHandler3, transformMockDataData3 } from './module3.js';
+export { createMockDataHandler4, transformMockDataData4 } from './module4.js';
+export { createMockDataHandler5, transformMockDataData5 } from './module5.js';
+export { createMockDataHandler6, transformMockDataData6 } from './module6.js';
+export { createMockDataHandler7, transformMockDataData7 } from './module7.js';
+export { createMockDataHandler8, transformMockDataData8 } from './module8.js';
+export { createMockDataHandler9, transformMockDataData9 } from './module9.js';
