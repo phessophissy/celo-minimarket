@@ -43,3 +43,6 @@ export const appKit = createAppKit({
 })
 
 export { projectId, metadata }
+
+// Re-export marketplace config
+export { MARKETPLACE_CONFIG } from './marketplace.js';
