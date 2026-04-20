@@ -1,0 +1,8 @@
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:.75rem;font-weight:600;line-height:1.25rem}
+.badge-primary{background-color:rgba(53,208,127,.15);color:#35D07F}
+.badge-secondary{background-color:rgba(251,204,92,.15);color:#FBCC5C}
+.badge-error{background-color:rgba(248,81,73,.15);color:#f85149}
+.badge-info{background-color:rgba(88,166,255,.15);color:#58a6ff}
+.badge-sold{background-color:rgba(248,81,73,.1);color:#f85149;border:1px solid rgba(248,81,73,.3)}
+.badge-available{background-color:rgba(53,208,127,.1);color:#35D07F;border:1px solid rgba(53,208,127,.3)}
+.badge-inactive{background-color:rgba(139,148,158,.1);color:#8b949e;border:1px solid rgba(139,148,158,.3)}
