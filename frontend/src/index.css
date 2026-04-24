@@ -1,2 +1,11 @@
 /* All styles are now in src/styles/index.css */
 /* This file kept for compatibility only */
+
+/* define vibrant color system variables */
+:root {
+  --primary: #FF0080;
+  --secondary: #7928CA;
+  --accent: #00DFD8;
+  --bg-gradient: linear-gradient(135deg, #FF0080 0%, #7928CA 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+}
