@@ -21,3 +21,10 @@ body {
 /* update typography with Montserrat font */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 body { font-family: 'Montserrat', sans-serif; }
+
+/* apply neon glow effects to buttons */
+button {
+  box-shadow: 0 0 15px var(--accent);
+  transition: all 0.3s ease;
+}
+button:hover { transform: scale(1.05); }
