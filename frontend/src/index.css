@@ -9,3 +9,11 @@
   --bg-gradient: linear-gradient(135deg, #FF0080 0%, #7928CA 100%);
   --glass-bg: rgba(255, 255, 255, 0.1);
 }
+
+/* implement global animated background */
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: white;
+  min-height: 100vh;
+}
