@@ -1,2 +1,34 @@
 /* All styles are now in src/styles/index.css */
 /* This file kept for compatibility only */
+
+/* define vibrant color system variables */
+:root {
+  --primary: #FF0080;
+  --secondary: #7928CA;
+  --accent: #00DFD8;
+  --bg-gradient: linear-gradient(135deg, #FF0080 0%, #7928CA 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* implement global animated background */
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: white;
+  min-height: 100vh;
+}
+
+/* update typography with Montserrat font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+body { font-family: 'Montserrat', sans-serif; }
+
+/* apply neon glow effects to buttons */
+button {
+  box-shadow: 0 0 15px var(--accent);
+  transition: all 0.3s ease;
+}
+button:hover { transform: scale(1.05); }
+
+/* add smooth page transitions */
+.page-enter { opacity: 0; }
+.page-enter-active { opacity: 1; transition: opacity 300ms; }

@@ -304,3 +304,6 @@ export default function App({ onReady }) {
     </>
   )
 }
+
+/* integrate MarketPriceTicker into App header */
+// Integration logic
