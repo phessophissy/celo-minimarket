@@ -28,3 +28,7 @@ button {
   transition: all 0.3s ease;
 }
 button:hover { transform: scale(1.05); }
+
+/* add smooth page transitions */
+.page-enter { opacity: 0; }
+.page-enter-active { opacity: 1; transition: opacity 300ms; }
